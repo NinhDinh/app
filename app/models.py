@@ -21,7 +21,7 @@ class Client(db.Model, ModelMixin):
 
 
 class User(db.Model, ModelMixin, UserMixin):
-    email = db.Column(db.String(128), unique=True)
+    email = db.Column(db.String(128), unique=True, nullable=False)
     salt = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(128))
