@@ -1,6 +1,7 @@
 import os
 
-from flask import Flask
+from flask import Flask, redirect, url_for
+from flask_login import current_user
 
 from app.auth.base import auth_bp
 from app.dashboard.base import dashboard_bp
@@ -21,6 +22,7 @@ def create_app() -> Flask:
 
     init_extensions(app)
     register_blueprints(app)
+    set_index_page(app)
 
     return app
 
@@ -59,6 +61,15 @@ def register_blueprints(app: Flask):
     app.register_blueprint(auth_bp)
     app.register_blueprint(monitor_bp)
     app.register_blueprint(dashboard_bp)
+
+
+def set_index_page(app):
+    @app.route("/")
+    def index():
+        if current_user.is_authenticated:
+            return redirect(url_for("dashboard.index"))
+        else:
+            return redirect(url_for("auth.login"))
 
 
 def init_extensions(app: Flask):
