@@ -32,7 +32,13 @@ def fake_data():
     if os.path.exists("db.sqlite"):
         os.remove("db.sqlite")
 
+    # Create all tables
     db.create_all()
+
+    user = User(id=1, email="john@wick.com", name="John Wick")
+    user.set_password("password")
+    db.session.add(user)
+    db.session.commit()
 
     # fake data
     client = Client(
@@ -40,13 +46,9 @@ def fake_data():
         client_secret="client-secret",
         redirect_uri="http://localhost:7000/callback",
         name="Continental",
+        user_id=user.id,
     )
     db.session.add(client)
-
-    user = User(id=1, email="john@wick.com", name="John Wick")
-    user.set_password("password")
-    db.session.add(user)
-
     db.session.commit()
 
 
