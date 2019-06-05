@@ -5,6 +5,7 @@ from flask_login import current_user
 
 from app.auth.base import auth_bp
 from app.dashboard.base import dashboard_bp
+from app.developer.base import developer_bp
 from app.extensions import db, login_manager
 from app.log import LOG
 from app.models import Client, User
@@ -63,6 +64,7 @@ def register_blueprints(app: Flask):
     app.register_blueprint(auth_bp)
     app.register_blueprint(monitor_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(developer_bp)
 
 
 def set_index_page(app):
