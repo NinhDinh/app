@@ -96,6 +96,9 @@ class AuthorizationCode(db.Model, ModelMixin):
     client_id = db.Column(db.ForeignKey(Client.id), nullable=False)
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
 
+    user = db.relationship(User, lazy=False)
+    client = db.relationship(Client, lazy=False)
+
 
 class OauthToken(db.Model, ModelMixin):
     access_token = db.Column(db.String(128), unique=True)
