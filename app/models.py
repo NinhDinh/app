@@ -12,6 +12,53 @@ class ModelMixin(object):
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow)
 
+    _repr_hide = ["created_at", "updated_at"]
+
+    @classmethod
+    def query(cls):
+        return db.session.query(cls)
+
+    @classmethod
+    def get(cls, id):
+        return cls.query.get(id)
+
+    @classmethod
+    def get_by(cls, **kw):
+        return cls.query.filter_by(**kw).first()
+
+    @classmethod
+    def filter_by(cls, **kw):
+        return cls.query.filter_by(**kw)
+
+    @classmethod
+    def get_or_create(cls, **kw):
+        r = cls.get_by(**kw)
+        if not r:
+            r = cls(**kw)
+            db.session.add(r)
+
+        return r
+
+    @classmethod
+    def create(cls, **kw):
+        r = cls(**kw)
+        db.session.add(r)
+        return r
+
+    def save(self):
+        db.session.add(self)
+
+    def delete(self):
+        db.session.delete(self)
+
+    def __repr__(self):
+        values = ", ".join(
+            "%s=%r" % (n, getattr(self, n))
+            for n in self.__table__.c.keys()
+            if n not in self._repr_hide
+        )
+        return "%s(%s)" % (self.__class__.__name__, values)
+
 
 class User(db.Model, ModelMixin, UserMixin):
     email = db.Column(db.String(128), unique=True, nullable=False)
