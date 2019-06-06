@@ -9,5 +9,34 @@
 {% endblock %}
 
 {% block content %}
-    Developer
+    <table class="table table-striped">
+        <thead class="thead-light">
+        <tr>
+            <td>Name</td>
+            <td>Client ID</td>
+            <td>Client Secret</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client in clients %}
+            <tr>
+                <td>{{ client.name }}</td>
+                <td>{{ client.client_id }}</td>
+                <td>
+                    <button class="btn btn-info"
+                            data-clipboard-text="{{ client.client_secret }}">
+                        Copy to clipboard
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        new ClipboardJS('.btn');
+    </script>
 {% endblock %}
