@@ -1,1 +1,1 @@
-from .views import authorize, token
+from .views import authorize, token, user_info
