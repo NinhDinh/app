@@ -1,0 +1,20 @@
+{% from "_formhelpers.html" import render_field %}
+
+{% extends 'base.html' %}
+
+{% block title %}
+    Authorization
+{% endblock %}
+
+{% block content %}
+    {{ client.name }} would like to have access to your following data.
+
+    <ul>
+        {% for scope in client.scopes %}
+            <li>{{ scope.name }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('auth.login') }}">Login</a>
+
+
+{% endblock %}

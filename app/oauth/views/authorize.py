@@ -37,7 +37,9 @@ def authorize():
         # after user logs in, redirect user back to this page
         session["redirect_after_login"] = request.url
 
-        return redirect(url_for("auth.login"))
+        return render_template(
+            "oauth/authorize_nonlogin_user.html", client=client, state=state
+        )
 
 
 @oauth_bp.route("/allow-deny", methods=["POST"])
