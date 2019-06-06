@@ -21,7 +21,11 @@
         <tbody>
         {% for client in clients %}
             <tr>
-                <td>{{ client.name }}</td>
+                <td>
+                    <a href="{{ url_for('developer.client_detail', client_id=client.id) }}">
+                        {{ client.name }}
+                    </a>
+                </td>
                 <td>{{ client.client_id }}</td>
                 <td>
                     <button class="btn btn-info"
