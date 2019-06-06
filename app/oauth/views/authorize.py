@@ -1,9 +1,10 @@
 from flask import request, render_template, redirect, url_for, session
 from flask_login import current_user, login_required
 
+from app.config import EMAIL_DOMAIN
 from app.extensions import db
 from app.log import LOG
-from app.models import Client, AuthorizationCode
+from app.models import Client, AuthorizationCode, ClientUser, VirtualDomain, GenEmail
 from app.oauth.base import oauth_bp
 from app.utils import random_string
 
@@ -42,6 +43,19 @@ def authorize():
         )
 
 
+def generate_email() -> str:
+    random_email = random_string(20) + "@" + EMAIL_DOMAIN
+
+    # check that the client does not exist yet
+    if not GenEmail.get_by(email=random_email):
+        LOG.debug("generate email %s", random_email)
+        return random_email
+
+    # Rerun the function
+    LOG.warning("email %s already exists, generate a new email", random_email)
+    return generate_email()
+
+
 @oauth_bp.route("/allow-deny", methods=["POST"])
 @login_required
 def allow_client():
@@ -55,15 +69,40 @@ def allow_client():
     client = Client.get(client_id)
     state = request.form.get("state")
 
+    gen_new_email = request.form.get("gen-email") == "on"
+
     if request.form.get("button") == "allow":
         LOG.debug("User %s allows Client %s", current_user, client)
 
         # Create authorization code
-        auth_code = AuthorizationCode(
+        auth_code = AuthorizationCode.create(
             client_id=client.id, user_id=current_user.id, code=random_string()
         )
         db.session.add(auth_code)
         db.session.commit()
+
+        client_user = ClientUser.get_or_create(
+            client_id=client.id, user_id=current_user.id
+        )
+        db.session.commit()
+
+        if gen_new_email:
+            # todo: always use the first domain
+            domain = VirtualDomain.query.first()
+            random_email = generate_email()
+            gen_email = GenEmail.create(
+                domain_id=domain.id, user_id=current_user.id, email=random_email
+            )
+            db.session.commit()
+            LOG.debug(
+                "generate email %s for user %s, client %s",
+                random_email,
+                current_user,
+                client,
+            )
+
+            client_user.gen_email_id = gen_email.id
+            db.session.commit()
 
         redirect_url = f"{client.redirect_uri}?code={auth_code.code}&state={state}"
         return redirect(redirect_url)

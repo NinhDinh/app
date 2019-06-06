@@ -23,7 +23,7 @@ def generate_client_id(client_name) -> str:
         return client_id
 
     # Rerun the function
-    LOG.warning("client_id %s already exists, generate a new")
+    LOG.warning("client_id %s already exists, generate a new client_id", client_id)
     return generate_client_id(client_name)
 
 

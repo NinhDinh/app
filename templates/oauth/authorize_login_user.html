@@ -18,6 +18,14 @@
         <input type="hidden" name="client-id" value="{{ client.id }}">
         <input type="hidden" name="state" value="{{ state }}">
 
+        <div class="form-check">
+            <input type="checkbox" name="gen-email" class="form-check-input">
+            <label class="form-check-label">Generate a new email</label>
+            <small class="form-text text-muted">
+                A new random email address will be generated for this app.
+            </small>
+        </div>
+
         <button type="submit" name="button" value="allow" class="btn btn-success">Allow</button>
 
         <button type="submit" name="button" value="deny" class="btn btn-light">Deny</button>
