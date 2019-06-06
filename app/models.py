@@ -79,6 +79,12 @@ class User(db.Model, ModelMixin, UserMixin):
 
 # <<< OAUTH models >>>
 
+client_scope = db.Table(
+    "client_scope",
+    db.Column("client_id", db.Integer, db.ForeignKey("client.id"), primary_key=True),
+    db.Column("scope_id", db.Integer, db.ForeignKey("scope.id"), primary_key=True),
+)
+
 
 class Client(db.Model, ModelMixin):
     client_id = db.Column(db.String(128), unique=True, nullable=False)
@@ -89,6 +95,8 @@ class Client(db.Model, ModelMixin):
 
     # user who created this client
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
+
+    scopes = db.relationship("Scope", secondary=client_scope, lazy="subquery")
 
 
 class AuthorizationCode(db.Model, ModelMixin):
@@ -106,3 +114,7 @@ class OauthToken(db.Model, ModelMixin):
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
 
     user = db.relationship(User)
+
+
+class Scope(db.Model, ModelMixin):
+    name = db.Column(db.String(128), unique=True)
