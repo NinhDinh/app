@@ -1,4 +1,4 @@
-from flask import request, flash, render_template, redirect, url_for
+from flask import request, flash, render_template, redirect, url_for, session
 from flask_login import login_user
 from wtforms import StringField, validators
 
@@ -38,6 +38,12 @@ def register():
 
             login_user(user)
 
-            return redirect(url_for("dashboard.index"))
+            # User comes to register page from another page
+            if "redirect_after_login" in session:
+                LOG.debug("redirect user to %s", session["redirect_after_login"])
+                return redirect(session["redirect_after_login"])
+            else:
+                LOG.debug("redirect user to dashboard")
+                return redirect(url_for("dashboard.index"))
 
     return render_template("auth/register.html", form=form)

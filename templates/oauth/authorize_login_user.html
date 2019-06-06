@@ -1,0 +1,20 @@
+{% from "_formhelpers.html" import render_field %}
+
+{% extends 'base_app.html' %}
+
+{% block title %}
+    Authorization
+{% endblock %}
+
+{% block content %}
+    {{ client.name }} would like to have access to your data. Do you allow?
+    <form method="post" action="./allow-deny">
+        <input type="hidden" name="client-id" value="{{ client.id }}">
+        <input type="hidden" name="state" value="{{ state }}">
+
+        <button type="submit" name="button" value="allow" class="btn btn-success">Allow</button>
+
+        <button type="submit" name="button" value="deny" class="btn btn-light">Deny</button>
+    </form>
+
+{% endblock %}

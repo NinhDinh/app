@@ -10,6 +10,7 @@ from app.extensions import db, login_manager
 from app.log import LOG
 from app.models import Client, User
 from app.monitor.base import monitor_bp
+from app.oauth.base import oauth_bp
 
 
 def create_app() -> Flask:
@@ -65,6 +66,7 @@ def register_blueprints(app: Flask):
     app.register_blueprint(monitor_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(developer_bp)
+    app.register_blueprint(oauth_bp)
 
 
 def set_index_page(app):
