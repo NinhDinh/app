@@ -37,6 +37,13 @@
 
 {% block script %}
     <script>
-        new ClipboardJS('.btn');
+        var clipboard = new ClipboardJS('.btn');
+
+        clipboard.on('success', function (e) {
+            toastr.options.timeOut = 30; // How long the toast will display without user interaction
+            toastr.info('Copied to clipboard');
+
+            e.clearSelection();
+        });
     </script>
 {% endblock %}
