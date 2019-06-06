@@ -1,0 +1,19 @@
+{% from "_formhelpers.html" import render_field %}
+
+{% extends 'base_app.html' %}
+
+{% set active_page = "developer" %}
+
+{% block title %}
+    Developer - Create new client
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {{ form.csrf_token }}
+        {{ render_field(form.name) }}
+        {{ render_field(form.redirect_uri) }}
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+
+{% endblock %}
