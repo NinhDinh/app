@@ -10,12 +10,14 @@
 
 {% block content %}
     <a href="{{ url_for('developer.new_client') }}">Create new client</a>
+
     <table class="table table-striped">
         <thead class="thead-light">
         <tr>
             <td>Name</td>
             <td>Client ID</td>
             <td>Client Secret</td>
+            <td></td>
         </tr>
         </thead>
         <tbody>
@@ -32,6 +34,16 @@
                             data-clipboard-text="{{ client.client_secret }}">
                         Copy to clipboard
                     </button>
+                </td>
+                <td>
+                    <form method="post"
+                          onsubmit="return confirm('Please make sure no user is using this client. This operation is not reversible');">
+                        <input type="hidden" name="form-name" value="delete-client">
+                        <input type="hidden" name="client-id" value="{{ client.id }}">
+                        <button type="submit" class="btn btn-danger">
+                            Delete
+                        </button>
+                    </form>
                 </td>
             </tr>
         {% endfor %}
