@@ -118,3 +118,29 @@ class OauthToken(db.Model, ModelMixin):
 
 class Scope(db.Model, ModelMixin):
     name = db.Column(db.String(128), unique=True)
+
+
+class VirtualDomain(db.Model, ModelMixin):
+    """Email domain"""
+
+    name = db.Column(db.String(128), unique=True)
+
+
+class GenEmail(db.Model, ModelMixin):
+    """Generated email"""
+
+    domain_id = db.Column(db.ForeignKey(VirtualDomain.id), nullable=False)
+    user_id = db.Column(db.ForeignKey(User.id), nullable=False)
+    email = db.Column(db.String(128), unique=True)
+
+
+class ClientUser(db.Model, ModelMixin):
+    __table_args__ = (
+        db.UniqueConstraint("user_id", "client_id", name="uq_client_user"),
+    )
+
+    user_id = db.Column(db.ForeignKey(User.id), nullable=False)
+    client_id = db.Column(db.ForeignKey(Client.id), nullable=False)
+
+    # Null means client has access to user original email
+    gen_email_id = db.Column(db.ForeignKey(GenEmail.id), nullable=True)

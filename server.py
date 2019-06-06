@@ -9,7 +9,7 @@ from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
 from app.extensions import db, login_manager
 from app.log import LOG
-from app.models import Client, User, Scope
+from app.models import Client, User, Scope, VirtualDomain
 from app.monitor.base import monitor_bp
 from app.oauth.base import oauth_bp
 
@@ -61,7 +61,9 @@ def fake_data():
     db.session.commit()
 
     client.scopes.append(scope_name)
+    db.session.commit()
 
+    virtual_domain = VirtualDomain.create(name="yourkey.io")
     db.session.commit()
 
 
