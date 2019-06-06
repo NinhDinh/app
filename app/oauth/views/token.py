@@ -4,6 +4,7 @@ from app.extensions import db
 from app.log import LOG
 from app.models import Client, AuthorizationCode, OauthToken
 from app.oauth.base import oauth_bp
+from app.oauth.views.user_info import get_user_info
 from app.utils import random_string
 
 
@@ -57,11 +58,14 @@ def get_access_token():
 
     db.session.commit()
 
+    user_data = get_user_info(auth_code.user, auth_code.client)
+
     return jsonify(
         {
             "access_token": oauth_token.access_token,
             "token_type": "bearer",
             "expires_in": 3600,
             "scope": "create delete",
+            "user": user_data
         }
     )

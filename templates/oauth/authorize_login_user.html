@@ -7,7 +7,13 @@
 {% endblock %}
 
 {% block content %}
-    {{ client.name }} would like to have access to your data. Do you allow?
+    {{ client.name }} would like to have access to your following data. Do you allow?
+
+    <ul>
+        {% for scope in client.scopes %}
+            <li>{{ scope.name }}</li>
+        {% endfor %}
+    </ul>
     <form method="post" action="./allow-deny">
         <input type="hidden" name="client-id" value="{{ client.id }}">
         <input type="hidden" name="state" value="{{ state }}">

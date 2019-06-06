@@ -4,6 +4,7 @@ from flask import Flask, redirect, url_for
 from flask_login import current_user
 
 from app.auth.base import auth_bp
+from app.config import SCOPE_NAME, SCOPE_EMAIL
 from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
 from app.extensions import db, login_manager
@@ -53,9 +54,9 @@ def fake_data():
     )
     db.session.add(client)
 
-    scope_name = Scope.create(name="name")
+    scope_name = Scope.create(name=SCOPE_NAME)
     db.session.add(scope_name)
-    scope_email = Scope.create(name="email")
+    scope_email = Scope.create(name=SCOPE_EMAIL)
     db.session.add(scope_email)
     db.session.commit()
 

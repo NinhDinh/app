@@ -1,7 +1,20 @@
 from flask import request, jsonify
 
+from app.config import SCOPE_NAME, SCOPE_EMAIL
 from app.models import OauthToken
 from app.oauth.base import oauth_bp
+
+
+def get_user_info(user, client) -> dict:
+    """return user info according to client scope"""
+    res = {}
+    for scope in client.scopes:
+        if scope.name == SCOPE_NAME:
+            res[SCOPE_NAME] = user.name
+        elif scope.name == SCOPE_EMAIL:
+            res[SCOPE_EMAIL] = user.email
+
+    return res
 
 
 @oauth_bp.route("/user_info")
@@ -15,6 +28,4 @@ def user_info():
     if not oauth_token:
         return jsonify(error="Need bearer token"), 400
 
-    user = oauth_token.user
-
-    return jsonify({"email": user.email, "name": user.name})
+    return jsonify(get_user_info(oauth_token.user, oauth_token.client))
