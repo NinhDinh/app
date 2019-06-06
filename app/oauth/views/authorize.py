@@ -31,9 +31,24 @@ def authorize():
         return f"no such client with id {client_id}", 400
 
     if current_user.is_authenticated:
-        return render_template(
-            "oauth/authorize_login_user.html", client=client, state=state
-        )
+        # user has already allowed this client
+        if ClientUser.get_by(client_id=client.id, user_id=current_user.id):
+            LOG.debug("user %s has already allowed client %s", current_user, client)
+
+            # Create authorization code
+            auth_code = AuthorizationCode.create(
+                client_id=client.id, user_id=current_user.id, code=random_string()
+            )
+            db.session.add(auth_code)
+            db.session.commit()
+
+            redirect_url = f"{client.redirect_uri}?code={auth_code.code}&state={state}"
+
+            return redirect(redirect_url)
+        else:
+            return render_template(
+                "oauth/authorize_login_user.html", client=client, state=state
+            )
     else:
         # after user logs in, redirect user back to this page
         session["redirect_after_login"] = request.url
