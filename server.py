@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, request
 from flask_login import current_user
 
 from app.auth.base import auth_bp
@@ -89,6 +89,15 @@ def set_index_page(app):
             return redirect(url_for("dashboard.index"))
         else:
             return redirect(url_for("auth.login"))
+
+    @app.before_request
+    def before_request():
+        LOG.debug(">>> Request %s", request.url)
+
+    @app.after_request
+    def after_request(res):
+        LOG.debug("<<< Request ends %s", request.url)
+        return res
 
 
 def init_extensions(app: Flask):
