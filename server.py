@@ -61,6 +61,7 @@ def fake_data():
     db.session.commit()
 
     client.scopes.append(scope_name)
+    client.scopes.append(scope_email)
     db.session.commit()
 
     virtual_domain = VirtualDomain.create(name=EMAIL_DOMAIN)

@@ -114,6 +114,7 @@ class OauthToken(db.Model, ModelMixin):
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
 
     user = db.relationship(User)
+    client = db.relationship(Client)
 
 
 class Scope(db.Model, ModelMixin):
@@ -144,3 +145,8 @@ class ClientUser(db.Model, ModelMixin):
 
     # Null means client has access to user original email
     gen_email_id = db.Column(db.ForeignKey(GenEmail.id), nullable=True)
+
+    gen_email = db.relationship(GenEmail)
+
+    user = db.relationship(User)
+    client = db.relationship(Client)

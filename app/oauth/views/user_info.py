@@ -1,18 +1,30 @@
 from flask import request, jsonify
 
 from app.config import SCOPE_NAME, SCOPE_EMAIL
-from app.models import OauthToken
+from app.log import LOG
+from app.models import OauthToken, ClientUser
 from app.oauth.base import oauth_bp
 
 
 def get_user_info(user, client) -> dict:
     """return user info according to client scope"""
+
+    client_user: ClientUser = ClientUser.get_by(client_id=client.id, user_id=user.id)
+    if not client_user:
+        raise Exception("client cannot access user data")
+
     res = {}
     for scope in client.scopes:
         if scope.name == SCOPE_NAME:
             res[SCOPE_NAME] = user.name
         elif scope.name == SCOPE_EMAIL:
-            res[SCOPE_EMAIL] = user.email
+            # Use generated email
+            if client_user.gen_email_id:
+                LOG.debug("Use gen email for user %s, client %s", user, client)
+                res[SCOPE_EMAIL] = client_user.gen_email.email
+            # Use user original email
+            else:
+                res[SCOPE_EMAIL] = user.email
 
     return res
 
