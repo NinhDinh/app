@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from flask_wtf import Form
+from wtforms import Form
 from wtforms.csrf.session import SessionCSRF
 
 
