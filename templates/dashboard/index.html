@@ -9,5 +9,20 @@
 {% endblock %}
 
 {% block content %}
-    Dashboard
+    <table class="table table-striped">
+        <thead class="thead-light">
+        <tr>
+            <td>Name</td>
+            <td>Email</td>
+        </tr>
+        </thead>
+        <tbody>
+        {% for client_user in client_users %}
+            <tr>
+                <td>{{ client_user.client.name }}</td>
+                <td>{{ client_user.gen_email.email if client_user.gen_email_id else current_user.email }}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
