@@ -121,16 +121,9 @@ class Scope(db.Model, ModelMixin):
     name = db.Column(db.String(128), unique=True)
 
 
-class VirtualDomain(db.Model, ModelMixin):
-    """Email domain"""
-
-    name = db.Column(db.String(128), unique=True)
-
-
 class GenEmail(db.Model, ModelMixin):
     """Generated email"""
 
-    domain_id = db.Column(db.ForeignKey(VirtualDomain.id), nullable=False)
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
     email = db.Column(db.String(128), unique=True)
 

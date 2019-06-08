@@ -1,10 +1,10 @@
-from flask import request, render_template, redirect, url_for, session
+from flask import request, render_template, redirect, session
 from flask_login import current_user, login_required
 
 from app.config import EMAIL_DOMAIN
 from app.extensions import db
 from app.log import LOG
-from app.models import Client, AuthorizationCode, ClientUser, VirtualDomain, GenEmail
+from app.models import Client, AuthorizationCode, ClientUser, GenEmail
 from app.oauth.base import oauth_bp
 from app.utils import random_string
 
@@ -102,12 +102,8 @@ def allow_client():
         db.session.commit()
 
         if gen_new_email:
-            # todo: always use the first domain
-            domain = VirtualDomain.query.first()
             random_email = generate_email()
-            gen_email = GenEmail.create(
-                domain_id=domain.id, user_id=current_user.id, email=random_email
-            )
+            gen_email = GenEmail.create(user_id=current_user.id, email=random_email)
             db.session.commit()
             LOG.debug(
                 "generate email %s for user %s, client %s",
