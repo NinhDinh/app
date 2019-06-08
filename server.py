@@ -112,4 +112,4 @@ if __name__ == "__main__":
     with app.app_context():
         fake_data()
 
-    app.run(debug=True, threaded=False)
+    app.run(debug=True, threaded=False, host="0.0.0.0")
