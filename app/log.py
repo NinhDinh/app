@@ -30,4 +30,4 @@ def get_logger(name):
 
 print(f">>> init logging <<<")
 
-LOG = get_logger("yourkey")
+LOG = get_logger("sl")

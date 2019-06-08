@@ -48,7 +48,7 @@ def fake_data():
     client = Client.create(
         client_id="client-id",
         client_secret="client-secret",
-        redirect_uri="http://yk-client:7000/callback",
+        redirect_uri="http://sl-client:7000/callback",
         name="Continental",
         user_id=user.id,
     )
