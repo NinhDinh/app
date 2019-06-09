@@ -25,11 +25,14 @@ def drop_db():
 
 
 def prepare_db():
-    scope_name = Scope.create(name=SCOPE_NAME)
-    db.session.add(scope_name)
-    scope_email = Scope.create(name=SCOPE_EMAIL)
-    db.session.add(scope_email)
-    db.session.commit()
+    app = create_app()
+
+    with app.app_context():
+        scope_name = Scope.create(name=SCOPE_NAME)
+        db.session.add(scope_name)
+        scope_email = Scope.create(name=SCOPE_EMAIL)
+        db.session.add(scope_email)
+        db.session.commit()
 
 
 embed()
