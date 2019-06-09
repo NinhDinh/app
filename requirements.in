@@ -9,3 +9,4 @@ bcrypt
 python-dotenv
 ipython
 sqlalchemy_utils
+psycopg2
