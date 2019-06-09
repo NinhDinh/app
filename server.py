@@ -4,7 +4,7 @@ from flask import Flask, redirect, url_for, request
 from flask_login import current_user
 
 from app.auth.base import auth_bp
-from app.config import SCOPE_NAME, SCOPE_EMAIL
+from app.config import SCOPE_NAME, SCOPE_EMAIL, DB_URI, FLASK_SECRET
 from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
 from app.extensions import db, login_manager
@@ -17,9 +17,9 @@ from app.oauth.base import oauth_bp
 def create_app() -> Flask:
     app = Flask(__name__)
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
+    app.config["SQLALCHEMY_DATABASE_URI"] = DB_URI
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.secret_key = "secret"
+    app.secret_key = FLASK_SECRET
 
     app.config["TEMPLATES_AUTO_RELOAD"] = True
 
