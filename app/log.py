@@ -30,4 +30,8 @@ def get_logger(name):
 
 print(f">>> init logging <<<")
 
+# Set some shortcuts
+logging.Logger.d = logging.Logger.debug
+logging.Logger.i = logging.Logger.info
+
 LOG = get_logger("sl")
