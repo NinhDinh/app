@@ -6,3 +6,6 @@ unidecode
 gunicorn
 pip-tools
 bcrypt
+python-dotenv
+ipython
+sqlalchemy_utils
