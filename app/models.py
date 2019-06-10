@@ -147,3 +147,6 @@ class ClientUser(db.Model, ModelMixin):
 
     user = db.relationship(User)
     client = db.relationship(Client)
+
+    def get_email(self):
+        return self.gen_email.email if self.gen_email_id else self.user.email

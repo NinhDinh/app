@@ -26,12 +26,20 @@
             {% for client_user in client_users %}
             <tr>
               <td>
-                <div>{{ client_user.gen_email.email if client_user.gen_email_id else current_user.email }}</div>
+                <div>
+                  {{ client_user.get_email() }}
+                  &nbsp; &nbsp;
+                  <i class="fe fe-copy clipboard" data-clipboard-text="{{ client_user.get_email() }}"></i>
+                </div>
+
                 {% if client_user.gen_email %}
                   <div class="small text-muted">
                     Created: {{ client_user.gen_email.created_at | dt }}
                   </div>
                 {% endif %}
+
+
+                </button>
               </td>
 
               <td>
@@ -59,4 +67,30 @@
     </div>
   </div>
 
+{% endblock %}
+
+{% block script %}
+  <script>
+    requirejs.config({
+      appDir: '.',
+      paths: {
+        'clipboard': ['/static/vendor/clipboard.min'],
+        'notie': ['/static/vendor/notie.min']
+      }
+    });
+
+    require(['clipboard', 'notie'], function (Clipboard, notie) {
+      var clipboard = new Clipboard('.clipboard');
+
+      clipboard.on('success', function (e) {
+        notie.alert({
+          type: "success",
+          text: "Copied to clipboard",
+          time: 1,
+        });
+
+        e.clearSelection();
+      });
+    });
+  </script>
 {% endblock %}
