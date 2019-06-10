@@ -9,20 +9,52 @@
 {% endblock %}
 
 {% block default_content %}
-    <table class="table table-striped">
-        <thead class="thead-light">
-        <tr>
-            <td>Name</td>
-            <td>Email</td>
-        </tr>
-        </thead>
-        <tbody>
-        {% for client_user in client_users %}
+  <div class="row row-cards row-deck">
+    <div class="col-12">
+      <div class="card">
+        <div class="table-responsive">
+          <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
+            <thead>
             <tr>
-                <td>{{ client_user.client.name }}</td>
-                <td>{{ client_user.gen_email.email if client_user.gen_email_id else current_user.email }}
+              <th>Email</th>
+              <th>Used by App</th>
+              <th class="text-center">First used</th>
+              <th class="text-center">Last used</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for client_user in client_users %}
+            <tr>
+              <td>
+                <div>{{ client_user.gen_email.email if client_user.gen_email_id else current_user.email }}</div>
+                {% if client_user.gen_email %}
+                  <div class="small text-muted">
+                    Created: {{ client_user.gen_email.created_at }}
+                  </div>
+                {% endif %}
+              </td>
+
+              <td>
+                {{ client_user.client.name }}
+              </td>
+
+              <td class="text-center">
+                {{ client_user.created_at }}
+              </td>
+
+              {#            TODO: add last_used#}
+              <td>
+                <div class="small text-muted">Last login</div>
+                <div>4 minutes ago</div>
+              </td>
+            </tr>
+            {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
 {% endblock %}
