@@ -1,6 +1,6 @@
 {% from "_formhelpers.html" import render_field %}
 
-{% extends 'base_app.html' %}
+{% extends 'default.html' %}
 
 {% set active_page = "developer" %}
 
@@ -8,7 +8,7 @@
     Developer - Create new client
 {% endblock %}
 
-{% block content %}
+{% block default_content %}
     <form method="post">
         {{ form.csrf_token }}
         {{ render_field(form.name) }}
