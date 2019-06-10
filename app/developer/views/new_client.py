@@ -2,10 +2,11 @@ from flask import request, render_template, redirect, url_for
 from flask_login import current_user, login_required
 from wtforms import Form, StringField, validators
 
+from app.config import SCOPE_NAME, SCOPE_EMAIL
 from app.developer.base import developer_bp
 from app.extensions import db
 from app.log import LOG
-from app.models import Client
+from app.models import Client, Scope
 from app.utils import random_string, convert_to_id
 
 
@@ -38,13 +39,17 @@ def new_client():
             client_id = generate_client_id(form.name.data)
             client_secret = random_string(40)
 
-            Client.create(
+            client = Client.create(
                 name=form.name.data,
                 redirect_uri=form.redirect_uri.data,
                 client_id=client_id,
                 client_secret=client_secret,
                 user_id=current_user.id,
             )
+
+            # By default, add email and name scope
+            client.scopes.append(Scope.get_by(name=SCOPE_NAME))
+            client.scopes.append(Scope.get_by(name=SCOPE_EMAIL))
 
             db.session.commit()
 
