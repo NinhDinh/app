@@ -1,0 +1,41 @@
+{% extends 'default.html' %}
+
+{% block title %}
+  Authorization
+{% endblock %}
+
+{% block default_content %}
+  <form class="card" method="post" action="./allow-deny">
+    <div class="card-body p-6">
+      <div class="card-title">
+        You have already authorized <b>{{ client.name }}</b>.
+      </div>
+
+      <div>
+        <b>{{ client.name }}</b> has access to the following information:
+      </div>
+
+      <ul>
+        {% for scope in client.scopes %}
+          <li>{{ scope.name }}: {{ user_info[scope.name] }}</li>
+        {% endfor %}
+      </ul>
+
+      <input type="hidden" name="client-id" value="{{ client.id }}">
+      <input type="hidden" name="state" value="{{ state }}">
+
+      <div class="form-footer">
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <button type="submit" name="button" value="allow"
+                  class="btn btn-success">Allow
+          </button>
+
+          <a class="btn btn-light" href="javascript:history.back()">
+            Cancel
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </form>
+{% endblock %}

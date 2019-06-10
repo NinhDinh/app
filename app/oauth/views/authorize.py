@@ -6,6 +6,7 @@ from app.extensions import db
 from app.log import LOG
 from app.models import Client, AuthorizationCode, ClientUser, GenEmail
 from app.oauth.base import oauth_bp
+from app.oauth.views.user_info import get_user_info
 from app.utils import random_string
 
 
@@ -34,17 +35,14 @@ def authorize():
         # user has already allowed this client
         if ClientUser.get_by(client_id=client.id, user_id=current_user.id):
             LOG.debug("user %s has already allowed client %s", current_user, client)
+            user_info = get_user_info(current_user, client)
 
-            # Create authorization code
-            auth_code = AuthorizationCode.create(
-                client_id=client.id, user_id=current_user.id, code=random_string()
+            return render_template(
+                "oauth/already_authorize.html",
+                client=client,
+                state=state,
+                user_info=user_info,
             )
-            db.session.add(auth_code)
-            db.session.commit()
-
-            redirect_url = f"{client.redirect_uri}?code={auth_code.code}&state={state}"
-
-            return redirect(redirect_url)
         else:
             return render_template(
                 "oauth/authorize_login_user.html", client=client, state=state
