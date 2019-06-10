@@ -1,4 +1,4 @@
-# <<< Models >>>
+import hashlib
 from datetime import datetime
 
 import bcrypt
@@ -75,6 +75,10 @@ class User(db.Model, ModelMixin, UserMixin):
     def check_password(self, password) -> bool:
         password_hash = bcrypt.hashpw(password.encode(), self.salt.encode())
         return self.password.encode() == password_hash
+
+    def gravatar_url(self):
+        hash_email = hashlib.md5(self.email.encode("utf-8")).hexdigest()
+        return f"https://www.gravatar.com/avatar/{hash_email}"
 
 
 # <<< OAUTH models >>>

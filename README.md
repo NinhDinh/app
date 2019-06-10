@@ -12,3 +12,11 @@ http -f -a client-id:client-secret http://localhost:5000/oauth/token grant_type=
 Get user info:
 
 http http://localhost:5000/oauth/user_info 'Authorization:Bearer {token}'
+
+
+## Template structure
+
+base
+    single: for login, register page
+    default: for all pages when user log ins
+        
