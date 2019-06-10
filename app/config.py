@@ -12,8 +12,10 @@ else:
 SCOPE_NAME = "name"
 SCOPE_EMAIL = "email"
 
+
 EMAIL_DOMAIN = os.environ.get("EMAIL_DOMAIN") or "sl"
 DB_URI = os.environ.get("DB_URI") or "sqlite:///db.sqlite"
 FLASK_SECRET = os.environ.get("FLASK_SECRET") or "secret"
+ENABLE_SENTRY = "ENABLE_SENTRY" in os.environ
 
 print("email domain is", EMAIL_DOMAIN)
