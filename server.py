@@ -2,7 +2,7 @@ import os
 
 import arrow
 import sentry_sdk
-from flask import Flask, redirect, url_for, request
+from flask import Flask, redirect, url_for, request, render_template
 from flask_login import current_user
 from sentry_sdk.integrations.flask import FlaskIntegration
 
@@ -37,6 +37,7 @@ def create_app() -> Flask:
     register_blueprints(app)
     set_index_page(app)
     jinja2_filter(app)
+    setup_error_page(app)
 
     return app
 
@@ -113,6 +114,24 @@ def set_index_page(app):
     def after_request(res):
         LOG.debug("<<< Request ends %s", request.url)
         return res
+
+
+def setup_error_page(app):
+    @app.errorhandler(400)
+    def page_not_found(e):
+        return render_template("error/400.html"), 400
+
+    @app.errorhandler(401)
+    def page_not_found(e):
+        return render_template("error/401.html"), 401
+
+    @app.errorhandler(403)
+    def page_not_found(e):
+        return render_template("error/403.html"), 403
+
+    @app.errorhandler(404)
+    def page_not_found(e):
+        return render_template("error/404.html"), 404
 
 
 def jinja2_filter(app):
