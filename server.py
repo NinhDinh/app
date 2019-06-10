@@ -11,7 +11,7 @@ from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
 from app.extensions import db, login_manager
 from app.log import LOG
-from app.models import Client, User, Scope
+from app.models import Client, User, Scope, ClientUser, GenEmail
 from app.monitor.base import monitor_bp
 from app.oauth.base import oauth_bp
 
@@ -73,6 +73,10 @@ def fake_data():
     client.scopes.append(scope_email)
     db.session.commit()
 
+    gen_email = GenEmail.create(user_id=user.id, email="john-random@sl")
+    db.session.commit()
+
+    ClientUser.create(client_id=client.id, user_id=user.id, gen_email_id=gen_email.id)
     db.session.commit()
 
 
