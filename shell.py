@@ -19,6 +19,8 @@ def create_db():
         # Create all tables
         db.create_all()
 
+    prepare_db()
+
 
 def drop_db():
     drop_database(DB_URI)
