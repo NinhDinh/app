@@ -19,7 +19,7 @@
               <th>Email</th>
               <th>Used by App</th>
               <th class="text-center">First used</th>
-              <th class="text-center">Last used</th>
+              <!--<th class="text-center">Last used</th>-->
             </tr>
             </thead>
             <tbody>
@@ -29,7 +29,7 @@
                 <div>{{ client_user.gen_email.email if client_user.gen_email_id else current_user.email }}</div>
                 {% if client_user.gen_email %}
                   <div class="small text-muted">
-                    Created: {{ client_user.gen_email.created_at }}
+                    Created: {{ client_user.gen_email.created_at | dt }}
                   </div>
                 {% endif %}
               </td>
@@ -43,9 +43,12 @@
               </td>
 
               {#            TODO: add last_used#}
-              <td class="text-center">
-                <div>4 minutes ago</div>
-              </td>
+              <!--
+                <td class="text-center">
+                  <div>4 minutes ago</div>
+                </td>
+              -->
+
             </tr>
             {% endfor %}
 
