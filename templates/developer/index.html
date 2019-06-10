@@ -9,58 +9,98 @@
 {% endblock %}
 
 {% block default_content %}
-    <a href="{{ url_for('developer.new_client') }}">Create new client</a>
+  <div class="row">
+    <div class="col-4">
+      <a href="{{ url_for('developer.new_client') }}" class="btn btn-success">Create new app</a>
+    </div>
+  </div>
 
-    <table class="table table-striped">
-        <thead class="thead-light">
-        <tr>
-            <td>Name</td>
-            <td>Client ID</td>
-            <td>Client Secret</td>
-            <td></td>
-        </tr>
-        </thead>
-        <tbody>
-        {% for client in clients %}
+  <div class="row row-cards row-deck mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="table-responsive">
+          <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
+            <thead>
             <tr>
-                <td>
-                    <a href="{{ url_for('developer.client_detail', client_id=client.id) }}">
-                        {{ client.name }}
-                    </a>
-                </td>
-                <td>{{ client.client_id }}</td>
-                <td>
-                    <button class="btn btn-info"
-                            data-clipboard-text="{{ client.client_secret }}">
-                        Copy to clipboard
-                    </button>
-                </td>
-                <td>
-                    <form method="post"
-                          onsubmit="return confirm('Please make sure no user is using this client. This operation is not reversible');">
-                        <input type="hidden" name="form-name" value="delete-client">
-                        <input type="hidden" name="client-id" value="{{ client.id }}">
-                        <button type="submit" class="btn btn-danger">
-                            Delete
-                        </button>
-                    </form>
-                </td>
+              <th>Name</th>
+              <th>Client ID</th>
+              <th class="text-center">Client Secret</th>
+              <th>Edit</th>
+              <th>Delete</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% for client in clients %}
+              <tr>
+                <td>
+                  <div>{{ client.name }} </div>
+                  <div class="small text-muted">
+                    Created at: {{ client.created_at }}
+                  </div>
+                </td>
+
+                <td>
+                  {{ client.id }}
+                </td>
+
+                <td class="text-center">
+                  <button class="btn btn-info"
+                          data-clipboard-text="{{ client.client_secret }}">
+                    Copy to clipboard
+                  </button>
+                </td>
+
+                <td>
+                  <a href="{{ url_for('developer.client_detail', client_id=client.id) }}" class="btn btn-info">
+                    <i class="fe fe-edit"></i>
+                  </a>
+                </td>
+
+                <td>
+                  <form method="post"
+                        onsubmit="return confirm('Please make sure no user is using this client. This operation is not reversible');">
+                    <input type="hidden" name="form-name" value="delete-client">
+                    <input type="hidden" name="client-id" value="{{ client.id }}">
+                    <button type="submit" class="btn btn-danger">
+                      <i class="fe fe-trash"></i>
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
 {% endblock %}
 
 {% block script %}
-    <script>
-        var clipboard = new ClipboardJS('.btn');
+  <script>
+    requirejs.config({
+      appDir: '.',
+      paths: {
+        'clipboard': ['/static/vendor/clipboard.min'],
+        'notie': ['/static/vendor/notie.min']
+      }
+    });
 
-        clipboard.on('success', function (e) {
-            toastr.options.timeOut = 30; // How long the toast will display without user interaction
-            toastr.info('Copied to clipboard');
+    require(['clipboard', 'notie'], function (Clipboard, notie) {
+      var clipboard = new Clipboard('.btn');
 
-            e.clearSelection();
+      clipboard.on('success', function (e) {
+        notie.alert({
+          type: "success",
+          text: "Copied to clipboard",
+          time: 1,
         });
-    </script>
+
+        e.clearSelection();
+      });
+    });
+  </script>
 {% endblock %}
+
