@@ -1,5 +1,6 @@
 import os
 
+import arrow
 import sentry_sdk
 from flask import Flask, redirect, url_for, request
 from flask_login import current_user
@@ -35,6 +36,7 @@ def create_app() -> Flask:
     init_extensions(app)
     register_blueprints(app)
     set_index_page(app)
+    jinja2_filter(app)
 
     return app
 
@@ -111,6 +113,14 @@ def set_index_page(app):
     def after_request(res):
         LOG.debug("<<< Request ends %s", request.url)
         return res
+
+
+def jinja2_filter(app):
+    def format_datetime(value):
+        dt = arrow.get(value)
+        return dt.humanize()
+
+    app.jinja_env.filters["dt"] = format_datetime
 
 
 def init_extensions(app: Flask):

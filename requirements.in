@@ -12,3 +12,4 @@ sqlalchemy_utils
 psycopg2
 sentry_sdk
 blinker
+arrow

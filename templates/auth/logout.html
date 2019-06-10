@@ -1,12 +1,14 @@
-{% from "_formhelpers.html" import render_field %}
-
-{% extends 'base.html' %}
+{% extends "single.html" %}
 
 {% block title %}
-    Logout
+  Logout
 {% endblock %}
 
-{% block content %}
-    You are logged out. <br>
+{% block single_content %}
+  <div class="text-center text-muted">
+    You are logged out.
+
     <a href="{{ url_for('auth.login') }}">Login</a>
+  </div>
+
 {% endblock %}
