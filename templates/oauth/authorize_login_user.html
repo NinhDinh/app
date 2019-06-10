@@ -1,34 +1,53 @@
-{% from "_formhelpers.html" import render_field %}
-
-{% extends 'base_app.html' %}
+{% extends 'default.html' %}
 
 {% block title %}
     Authorization
 {% endblock %}
 
-{% block content %}
-    {{ client.name }} would like to have access to your following data. Do you allow?
+{% block default_content %}
+  <form class="card" method="post" action="./allow-deny">
+    <div class="card-body p-6">
+      <div class="card-title">
+        <b>{{ client.name }}</b> will receive
+      </div>
 
-    <ul>
+      <ul>
         {% for scope in client.scopes %}
             <li>{{ scope.name }}</li>
         {% endfor %}
-    </ul>
-    <form method="post" action="./allow-deny">
-        <input type="hidden" name="client-id" value="{{ client.id }}">
-        <input type="hidden" name="state" value="{{ state }}">
+      </ul>
 
-        <div class="form-check">
-            <input type="checkbox" name="gen-email" class="form-check-input">
-            <label class="form-check-label">Generate a new email</label>
-            <small class="form-text text-muted">
-                A new random email address will be generated for this app.
-            </small>
+      <input type="hidden" name="client-id" value="{{ client.id }}">
+      <input type="hidden" name="state" value="{{ state }}">
+
+      <div class="form-group">
+        <div class="custom-controls-stacked">
+          <label class="custom-control custom-checkbox">
+            <input type="checkbox" name="gen-email"
+                   class="custom-control-input" checked>
+            <span class="custom-control-label">Generate a new email</span>
+          </label>
         </div>
 
-        <button type="submit" name="button" value="allow" class="btn btn-success">Allow</button>
+        <small class="form-text text-muted">
+          If checked, a new random email address will be generated for this app.
+        </small>
+      </div>
 
-        <button type="submit" name="button" value="deny" class="btn btn-light">Deny</button>
-    </form>
 
+      <div class="form-footer">
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <button type="submit" name="button" value="allow"
+                  class="btn btn-success">Allow
+          </button>
+
+          <button type="submit" name="button" value="deny"
+                  class="btn btn-light">Deny
+          </button>
+        </div>
+
+
+      </div>
+    </div>
+  </form>
 {% endblock %}
