@@ -10,3 +10,5 @@ python-dotenv
 ipython
 sqlalchemy_utils
 psycopg2
+sentry_sdk
+blinker
