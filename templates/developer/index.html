@@ -25,6 +25,7 @@
               <th>Name</th>
               <th>Client ID</th>
               <th class="text-center">Client Secret</th>
+              <th>Scopes</th>
               <th>Edit</th>
               <th>Delete</th>
             </tr>
@@ -48,6 +49,17 @@
                           data-clipboard-text="{{ client.client_secret }}">
                     Copy to clipboard
                   </button>
+                </td>
+
+                <td class="align-middle">
+                  <ul class="list-unstyled mb-0">
+                    {% for scope in client.scopes %}
+                      <li>
+                        <i class="fe fe-check"></i>
+                        {{ scope.name }}
+                      </li>
+                    {% endfor %}
+                  </ul>
                 </td>
 
                 <td>
