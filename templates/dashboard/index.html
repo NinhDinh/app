@@ -10,11 +10,15 @@
 
 {% block default_content %}
   <div class="row">
-    <div class="col-4">
+    <div class="col">
       <form method="post">
         <button class="btn btn-success">Generate new email</button>
       </form>
     </div>
+  </div>
+
+  <div class="page-header">
+    <h3 class="page-title">Emails used by apps</h3>
   </div>
 
   <div class="row row-cards row-deck mt-4">
@@ -45,9 +49,6 @@
                     Created: {{ client_user.gen_email.created_at | dt }}
                   </div>
                 {% endif %}
-
-
-                </button>
               </td>
 
               <td>
@@ -66,6 +67,45 @@
               -->
 
             </tr>
+            {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-header">
+    <h3 class="page-title">All other generated emails</h3>
+  </div>
+
+  <div class="row row-cards row-deck mt-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="table-responsive">
+          <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
+            <thead>
+            <tr>
+              <th>Email</th>
+              <th>Created At</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for gen_email in gen_emails %}
+              <tr>
+                <td>
+                  <div>
+                    {{ gen_email.email }}
+                    &nbsp; &nbsp;
+                    <i class="fe fe-copy clipboard" data-clipboard-text="{{ gen_email.email }}"></i>
+                  </div>
+                </td>
+
+                <td>
+                  {{ gen_email.created_at | dt }}
+                </td>
+              </tr>
             {% endfor %}
 
             </tbody>

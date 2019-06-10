@@ -29,4 +29,11 @@ def index():
         .all()
     )
 
-    return render_template("dashboard/index.html", client_users=client_users)
+    used_gen_email_ids = [client_user.gen_email_id for client_user in client_users]
+
+    # Emails not used by any client
+    gen_emails = GenEmail.query.filter(GenEmail.id.notin_(used_gen_email_ids))
+
+    return render_template(
+        "dashboard/index.html", client_users=client_users, gen_emails=gen_emails
+    )
