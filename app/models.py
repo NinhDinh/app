@@ -61,6 +61,7 @@ class ModelMixin(object):
 
 
 class User(db.Model, ModelMixin, UserMixin):
+    __tablename__ = "users"
     email = db.Column(db.String(128), unique=True, nullable=False)
     salt = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(128), nullable=False)
