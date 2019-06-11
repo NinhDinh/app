@@ -4,12 +4,11 @@ from wtforms import Form, StringField, validators
 
 from app.developer.base import developer_bp
 from app.extensions import db
-from app.models import Client
+from app.models import Client, RedirectUri
 
 
 class EditClientForm(Form):
     name = StringField("Name", validators=[validators.DataRequired()])
-    redirect_uri = StringField("Redirect URI", validators=[validators.DataRequired()])
 
 
 @developer_bp.route("/clients/<client_id>", methods=["GET", "POST"])
@@ -25,19 +24,26 @@ def client_detail(client_id):
         return redirect(url_for("developer.index"))
 
     if request.method == "GET":
-        form = EditClientForm(name=client.name, redirect_uri=client.redirect_uri)
+        form = EditClientForm(name=client.name)
     else:
         form = EditClientForm(request.form)
 
         if form.validate():
-
             client.name = form.name.data
-            client.redirect_uri = form.redirect_uri.data
+
+            uris = request.form.getlist("uri")
+
+            # replace all uris. TODO: optimize this?
+            for redirect_uri in client.redirect_uris:
+                redirect_uri.delete()
+
+            for uri in uris:
+                RedirectUri.create(client_id=client_id, uri=uri)
 
             db.session.commit()
 
-            flash(f"client {client.name} has been updated successfully")
+            flash(f"client {client.name} has been updated", "success")
 
-            return redirect(url_for("developer.index"))
+            return redirect(url_for("developer.client_detail", client_id=client.id))
 
     return render_template("developer/client_detail.html", form=form, client=client)

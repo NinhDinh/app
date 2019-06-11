@@ -12,7 +12,7 @@ from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
 from app.extensions import db, login_manager
 from app.log import LOG
-from app.models import Client, User, Scope, ClientUser, GenEmail
+from app.models import Client, User, Scope, ClientUser, GenEmail, RedirectUri
 from app.monitor.base import monitor_bp
 from app.oauth.base import oauth_bp
 
@@ -53,7 +53,7 @@ def fake_data():
 
     # fake data
 
-    user = User.create(id=1, email="john@wick.com", name="John Wick")
+    user = User.create(id=1, email="john@wick.com", name="John Wick", activated=True)
     user.set_password("password")
     db.session.add(user)
     db.session.commit()
@@ -61,16 +61,17 @@ def fake_data():
     client = Client.create(
         client_id="client-id",
         client_secret="client-secret",
-        redirect_uri="http://sl-client:7000/callback",
         name="Continental",
         user_id=user.id,
     )
-    db.session.add(client)
+    db.session.commit()
+
+    RedirectUri.create(client_id=client.id, uri="http://sl-client:7000/callback")
+    RedirectUri.create(client_id=client.id, uri="http://localhost:7000/callback")
+    db.session.commit()
 
     scope_name = Scope.create(name=SCOPE_NAME)
-    db.session.add(scope_name)
     scope_email = Scope.create(name=SCOPE_EMAIL)
-    db.session.add(scope_email)
     db.session.commit()
 
     client.scopes.append(scope_name)

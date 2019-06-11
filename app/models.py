@@ -104,7 +104,6 @@ class Client(db.Model, ModelMixin):
     client_id = db.Column(db.String(128), unique=True, nullable=False)
     client_secret = db.Column(db.String(128), nullable=False)
 
-    redirect_uri = db.Column(db.String(1024))
     name = db.Column(db.String(128))
 
     # user who created this client
@@ -114,6 +113,15 @@ class Client(db.Model, ModelMixin):
 
     def nb_user(self):
         return ClientUser.filter_by(client_id=self.id).count()
+
+
+class RedirectUri(db.Model, ModelMixin):
+    """Valid redirect uris for a client"""
+
+    client_id = db.Column(db.ForeignKey(Client.id), nullable=False)
+    uri = db.Column(db.String(1024), nullable=False)
+
+    client = db.relationship(Client, backref="redirect_uris")
 
 
 class AuthorizationCode(db.Model, ModelMixin):

@@ -19,12 +19,67 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label">OAuth Redirect Url</label>
-        {{ form.redirect_uri(class="form-control", type="url") }}
-        {{ render_field_errors(form.redirect_uri) }}
+        <label class="form-label">Authorized URIs</label>
+
+        {% for redirect_uri in client.redirect_uris %}
+          <div class="input-group mt-2">
+            <input type="url" name="uri" class="form-control" value="{{ redirect_uri.uri }}" required>
+
+            <span class="input-group-append">
+              <button class="remove-uri btn btn-primary" type="button">
+                <i class="fe fe-x"></i>
+              </button>
+            </span>
+
+          </div>
+        {% endfor %}
+
+        <div id="new-uris">
+          <!-- New uri will be put here -->
+        </div>
+
+        <button type="button" id="create-new-uri" class="mt-2 btn btn-outline-secondary">Add new uri</button>
       </div>
 
-      <button type="submit" class="btn btn-primary">Edit</button>
+      <button type="submit" class="btn btn-primary btn-lg">Update</button>
     </form>
 
+  <!-- template for new uri -->
+  <div class="input-group mt-2" id="hidden-uri" style="display: none">
+    <input type="url" name="uri" class="form-control" required>
+
+    <span class="input-group-append">
+      <button class="remove-uri btn btn-primary" type="button">
+        <i class="fe fe-x"></i>
+      </button>
+    </span>
+
+  </div>
+
+
+
+{% endblock %}
+
+{% block script %}
+  <script type="text/x-template" id="course-detail">
+    <h1> ALO </h1>
+  </script>
+
+  <script>
+    require(["jquery"], function ($) {
+      console.log("jquery init");
+      $("#create-new-uri").on("click", function (e) {
+        var clone = $("#hidden-uri").clone(true, true); // (true, true) to clone withDataAndEvents, deepWithDataAndEvents
+        clone.removeAttr("id");
+
+        $("#new-uris").append(clone);
+        clone.show();
+      });
+
+      $(".remove-uri").click(function (e) {
+        var currentElement = $(this);
+        currentElement.parent().parent().remove();
+      });
+    })
+  </script>
 {% endblock %}

@@ -1,4 +1,4 @@
-from flask import request, render_template, redirect, url_for
+from flask import request, render_template, redirect, url_for, flash
 from flask_login import current_user, login_required
 from wtforms import Form, StringField, validators
 
@@ -12,7 +12,6 @@ from app.utils import random_string, convert_to_id
 
 class NewClientForm(Form):
     name = StringField("Name", validators=[validators.DataRequired()])
-    redirect_uri = StringField("Redirect URI", validators=[validators.DataRequired()])
 
 
 def generate_client_id(client_name) -> str:
@@ -41,7 +40,6 @@ def new_client():
 
             client = Client.create(
                 name=form.name.data,
-                redirect_uri=form.redirect_uri.data,
                 client_id=client_id,
                 client_secret=client_secret,
                 user_id=current_user.id,
@@ -53,6 +51,8 @@ def new_client():
 
             db.session.commit()
 
-            return redirect(url_for("developer.index"))
+            flash("New client has been created", "success")
+
+            return redirect(url_for("developer.client_detail", client_id=client.id))
 
     return render_template("developer/new_client.html", form=form)
