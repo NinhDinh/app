@@ -32,7 +32,11 @@ def index():
     used_gen_email_ids = [client_user.gen_email_id for client_user in client_users]
 
     # Emails not used by any client
-    gen_emails = GenEmail.query.filter(GenEmail.id.notin_(used_gen_email_ids))
+    gen_emails = (
+        GenEmail.query.filter(GenEmail.id.notin_(used_gen_email_ids))
+        .filter(GenEmail.user_id == current_user.id)
+        .all()
+    )
 
     return render_template(
         "dashboard/index.html", client_users=client_users, gen_emails=gen_emails
