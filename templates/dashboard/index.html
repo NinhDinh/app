@@ -40,9 +40,12 @@
               <td>
                 <div>
                   {{ client_user.get_email() }}
-                  &nbsp; &nbsp;
-                  <i class="fe fe-copy clipboard" data-clipboard-text="{{ client_user.get_email() }}"></i>
                 </div>
+                <button class="clipboard btn btn-outline-secondary btn-sm"
+                        data-clipboard-text="{{ client_user.get_email() }}">
+                  Copy
+                </button>
+
 
                 {% if client_user.gen_email %}
                   <div class="small text-muted">
@@ -97,9 +100,11 @@
                 <td>
                   <div>
                     {{ gen_email.email }}
-                    &nbsp; &nbsp;
-                    <i class="fe fe-copy clipboard" data-clipboard-text="{{ gen_email.email }}"></i>
                   </div>
+                  <button class="clipboard btn btn-outline-secondary btn-sm"
+                          data-clipboard-text="{{ gen_email.email }}">
+                    Copy
+                  </button>
                 </td>
 
                 <td>
