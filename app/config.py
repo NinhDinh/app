@@ -12,8 +12,10 @@ else:
 SCOPE_NAME = "name"
 SCOPE_EMAIL = "email"
 
-
+URL = os.environ.get("URL") or "http://sl-server:5000"
 EMAIL_DOMAIN = os.environ.get("EMAIL_DOMAIN") or "sl"
+SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL") or "support@sl"
+SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY")
 DB_URI = os.environ.get("DB_URI") or "sqlite:///db.sqlite"
 FLASK_SECRET = os.environ.get("FLASK_SECRET") or "secret"
 ENABLE_SENTRY = "ENABLE_SENTRY" in os.environ
