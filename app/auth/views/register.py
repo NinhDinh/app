@@ -1,12 +1,14 @@
-from flask import request, flash, render_template, redirect, url_for, session
-from flask_login import login_user
+from flask import request, flash, render_template
 from wtforms import StringField, validators
 
+from app import email
 from app.auth.base import auth_bp
+from app.config import URL
 from app.extensions import db
 from app.form import BaseForm
 from app.log import LOG
-from app.models import User
+from app.models import User, ActivationCode
+from app.utils import random_string
 
 
 class RegisterForm(BaseForm):
@@ -23,27 +25,45 @@ def register():
 
     if request.method == "POST":
         if form.validate():
-            user = User.query.filter_by(email=form.email.data).first()
+            user = User.filter_by(email=form.email.data).first()
 
             if user:
                 flash(f"Email {form.email.data} already exists", "warning")
                 return render_template("auth/register.html", form=form)
 
             LOG.debug("create user %s", form.email.data)
-            user = User(email=form.email.data, name=form.name.data)
+            user = User.create(email=form.email.data, name=form.name.data)
             user.set_password(form.password.data)
-
-            db.session.add(user)
             db.session.commit()
 
-            login_user(user)
+            activation = ActivationCode.create(user_id=user.id, code=random_string(30))
+            db.session.commit()
 
-            # User comes to register page from another page
-            if "redirect_after_login" in session:
-                LOG.debug("redirect user to %s", session["redirect_after_login"])
-                return redirect(session["redirect_after_login"])
-            else:
-                LOG.debug("redirect user to dashboard")
-                return redirect(url_for("dashboard.index"))
+            # Send user activation email
+            activation_link = f"{URL}/auth/activate?code={activation.code}"
+            email.send(
+                user.email,
+                "Welcome to SimpleLogin! Confirm your email",
+                html_content=f"""
+Welcome to SimpleLogin {user.name}! <br><br>                
+                
+            
+You're on your way! <br><br>
+Let's confirm your email address. <br><br>
+
+By clicking on the following <a href="{activation_link}">link</a>, you are confirming your email address. <br><br>
+
+Or you can paste this link into your browser: <br><br>
+{activation_link} <br><br>
+
+See you very soon! <br>
+Son - SimpleLogin Founder.<br>
+            
+            """,
+            )
+
+            # reset form to avoid register again
+            form = RegisterForm()
+            flash("Please check your inbox for an activation email", "success")
 
     return render_template("auth/register.html", form=form)

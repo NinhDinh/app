@@ -18,10 +18,17 @@ def login():
 
     if request.method == "POST":
         if form.validate():
-            user = User.query.filter_by(email=form.email.data).first()
+            user = User.filter_by(email=form.email.data).first()
 
             if not user:
                 flash("No such email", "warning")
+                return render_template("auth/login.html", form=form)
+
+            if not user.activated:
+                flash(
+                    "You would need to validate your account, please check your inbox",
+                    "warning",
+                )
                 return render_template("auth/login.html", form=form)
 
             if not user.check_password(form.password.data):

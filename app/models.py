@@ -67,6 +67,8 @@ class User(db.Model, ModelMixin, UserMixin):
     password = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(128))
 
+    activated = db.Column(db.Boolean, default=False, nullable=False)
+
     def set_password(self, password):
         salt = bcrypt.gensalt()
         password_hash = bcrypt.hashpw(password.encode(), salt).decode()
@@ -80,6 +82,13 @@ class User(db.Model, ModelMixin, UserMixin):
     def gravatar_url(self):
         hash_email = hashlib.md5(self.email.encode("utf-8")).hexdigest()
         return f"https://www.gravatar.com/avatar/{hash_email}"
+
+
+class ActivationCode(db.Model, ModelMixin):
+    user_id = db.Column(db.ForeignKey(User.id), nullable=False)
+    code = db.Column(db.String(128), unique=True)
+
+    user = db.relationship(User)
 
 
 # <<< OAUTH models >>>
