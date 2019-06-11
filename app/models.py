@@ -103,6 +103,9 @@ class Client(db.Model, ModelMixin):
 
     scopes = db.relationship("Scope", secondary=client_scope, lazy="subquery")
 
+    def nb_user(self):
+        return ClientUser.filter_by(client_id=self.id).count()
+
 
 class AuthorizationCode(db.Model, ModelMixin):
     code = db.Column(db.String(128), unique=True, nullable=False)

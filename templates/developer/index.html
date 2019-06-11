@@ -26,6 +26,7 @@
               <th>OAuth Client ID</th>
               <th class="text-center">OAuth Client Secret</th>
               <th>Scopes</th>
+              <th>Number Users</th>
               <th>Edit</th>
               <th>Delete</th>
             </tr>
@@ -60,6 +61,10 @@
                       </li>
                     {% endfor %}
                   </ul>
+                </td>
+
+                <td>
+                  {{ client.nb_user() }}
                 </td>
 
                 <td>
