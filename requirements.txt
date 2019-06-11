@@ -34,6 +34,8 @@ pycparser==2.19           # via cffi
 pygments==2.4.2           # via ipython
 python-dateutil==2.8.0    # via arrow
 python-dotenv==0.10.3
+python-http-client==3.1.0  # via sendgrid
+sendgrid==6.0.5
 sentry-sdk==0.9.0
 six==1.12.0               # via bcrypt, pip-tools, prompt-toolkit, python-dateutil, sqlalchemy-utils, traitlets
 sqlalchemy-utils==0.33.11
