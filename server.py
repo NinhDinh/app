@@ -7,7 +7,7 @@ from flask_login import current_user
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 from app.auth.base import auth_bp
-from app.config import SCOPE_NAME, SCOPE_EMAIL, DB_URI, FLASK_SECRET, ENABLE_SENTRY
+from app.config import SCOPE_NAME, SCOPE_EMAIL, DB_URI, FLASK_SECRET, ENABLE_SENTRY, ENV
 from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
 from app.extensions import db, login_manager
@@ -151,7 +151,9 @@ def init_extensions(app: Flask):
 if __name__ == "__main__":
     app = create_app()
 
-    with app.app_context():
-        fake_data()
+    if ENV == "local":
+        LOG.d("reset db, add fake data")
+        with app.app_context():
+            fake_data()
 
     app.run(debug=True, threaded=False, host="0.0.0.0")
