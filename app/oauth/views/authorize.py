@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from app.config import EMAIL_DOMAIN
 from app.extensions import db
 from app.log import LOG
-from app.models import Client, AuthorizationCode, ClientUser, GenEmail
+from app.models import Client, AuthorizationCode, ClientUser, GenEmail, RedirectUri
 from app.oauth.base import oauth_bp
 from app.oauth.views.user_info import get_user_info
 from app.utils import random_string
@@ -22,6 +22,7 @@ def authorize():
     client_id = request.args.get("client_id")
     state = request.args.get("state")
     response_type = request.args.get("response_type")
+    redirect_uri: str = request.args.get("redirect_uri")
 
     # sanity check
     if not response_type == "code":
@@ -30,6 +31,12 @@ def authorize():
     client = Client.get_by(client_id=client_id)
     if not client:
         return f"no such client with id {client_id}", 400
+
+    # check if redirect_uri is valid
+    # allow localhost by default
+    if not redirect_uri.startswith("http://localhost"):
+        if not RedirectUri.get_by(client_id=client.id, uri=redirect_uri):
+            return f"{redirect_uri} is not authorized"
 
     if current_user.is_authenticated:
         # user has already allowed this client
@@ -41,11 +48,15 @@ def authorize():
                 "oauth/already_authorize.html",
                 client=client,
                 state=state,
+                redirect_uri=redirect_uri,
                 user_info=user_info,
             )
         else:
             return render_template(
-                "oauth/authorize_login_user.html", client=client, state=state
+                "oauth/authorize_login_user.html",
+                client=client,
+                state=state,
+                redirect_uri=redirect_uri,
             )
     else:
         # after user logs in, redirect user back to this page
@@ -81,6 +92,7 @@ def allow_client():
     client_id = request.form.get("client-id")
     client = Client.get(client_id)
     state = request.form.get("state")
+    redirect_uri = request.form.get("redirect-uri")
 
     gen_new_email = request.form.get("gen-email") == "on"
 
@@ -113,9 +125,9 @@ def allow_client():
             client_user.gen_email_id = gen_email.id
             db.session.commit()
 
-        redirect_url = f"{client.redirect_uri}?code={auth_code.code}&state={state}"
+        redirect_url = f"{redirect_uri}?code={auth_code.code}&state={state}"
         return redirect(redirect_url)
     else:
         LOG.debug("User %s denies Client %s", current_user, client)
-        redirect_url = f"{client.redirect_uri}?error=deny&state={state}"
+        redirect_url = f"{redirect_uri}?error=deny&state={state}"
         return redirect(redirect_url)
