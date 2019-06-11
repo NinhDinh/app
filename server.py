@@ -38,6 +38,7 @@ def create_app() -> Flask:
     set_index_page(app)
     jinja2_filter(app)
     setup_error_page(app)
+    setup_favicon_route(app)
 
     return app
 
@@ -132,6 +133,12 @@ def setup_error_page(app):
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template("error/404.html"), 404
+
+
+def setup_favicon_route(app):
+    @app.route("/favicon.ico")
+    def favicon():
+        return redirect("/static/favicon.ico")
 
 
 def jinja2_filter(app):
