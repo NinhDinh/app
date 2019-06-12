@@ -1,7 +1,8 @@
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from sqlalchemy.orm import joinedload
 
+from app import email
 from app.dashboard.base import dashboard_bp
 from app.extensions import db
 from app.log import LOG
@@ -14,13 +15,36 @@ from app.oauth.views.authorize import generate_email
 def index():
     # User generates a new email
     if request.method == "POST":
-        random_email = generate_email()
-        GenEmail.create(user_id=current_user.id, email=random_email)
-        db.session.commit()
+        if request.form.get("form-name") == "trigger-email":
+            gen_email_id = request.form.get("gen-email-id")
+            gen_email = GenEmail.get(gen_email_id)
 
-        LOG.d("generate new email %s for user %s", random_email, current_user)
+            LOG.d("trigger an email to %s", gen_email)
+            email.send(
+                gen_email.email,
+                "A Test Email",
+                f"""
+Hi {current_user.name} ! <br><br>
+This is a test email to make sure you receive email sent at {gen_email.email} <br><br>
+If you have any question, feel free to reply to this email, I will answer you :) <br><br>
+Have a nice day <br><br>
+Son - SimpleLogin Founder.<br>
+            """,
+            )
+            flash(
+                f"An email sent to {gen_email.email} is on its way, please check your inbox/spam folder",
+                "success",
+            )
 
-        return redirect(url_for("dashboard.index"))
+        elif request.form.get("form-name") == "create-new-email":
+            random_email = generate_email()
+            GenEmail.create(user_id=current_user.id, email=random_email)
+            db.session.commit()
+
+            LOG.d("generate new email %s for user %s", random_email, current_user)
+            flash(f"Email {random_email} has been created", "success")
+
+            return redirect(url_for("dashboard.index"))
 
     client_users = (
         ClientUser.filter_by(user_id=current_user.id)

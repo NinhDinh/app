@@ -68,6 +68,7 @@
   <div class="page-header row">
     <h3 class="page-title col">All generated emails</h3>
     <form method="post" class="col text-right">
+      <input type="hidden" name="form-name" value="create-new-email">
       <button class="btn btn-success">Generate new email</button>
     </form>
   </div>
@@ -80,6 +81,7 @@
             <thead>
             <tr>
               <th>Email</th>
+              <th>Actions</th>
               <th>Created At</th>
             </tr>
             </thead>
@@ -90,10 +92,23 @@
                   <div>
                     {{ gen_email.email }}
                   </div>
-                  <button class="clipboard btn btn-outline-secondary btn-sm"
-                          data-clipboard-text="{{ gen_email.email }}">
-                    Copy
-                  </button>
+                </td>
+
+                <td>
+                  <div class="btn-group">
+                    <button class="clipboard btn btn-secondary"
+                            data-clipboard-text="{{ gen_email.email }}">
+                      Copy
+                    </button>
+
+                    <form method="post">
+                      <input type="hidden" name="form-name" value="trigger-email">
+                      <input type="hidden" name="gen-email-id" value="{{ gen_email.id }}">
+
+                      <button class="btn btn-secondary">Trigger Test Email</button>
+                    </form>
+                  </div>
+
                 </td>
 
                 <td>
