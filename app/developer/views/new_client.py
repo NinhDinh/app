@@ -1,13 +1,19 @@
+import os
+
 from flask import request, render_template, redirect, url_for, flash
 from flask_login import current_user, login_required
-from wtforms import Form, StringField, validators
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileField
+from wtforms import StringField, validators
 
+from app.config import UPLOAD_DIR
 from app.developer.base import developer_bp
 from app.extensions import db
-from app.models import Client
+from app.models import Client, File
+from app.utils import random_string
 
 
-class NewClientForm(Form):
+class NewClientForm(FlaskForm):
     name = StringField("Name", validators=[validators.DataRequired()])
 
 

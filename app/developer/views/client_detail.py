@@ -1,13 +1,15 @@
 from flask import request, render_template, redirect, url_for, flash
 from flask_login import current_user, login_required
-from wtforms import Form, StringField, validators
+from flask_wtf import FlaskForm
+from flask_wtf.file import FileField
+from wtforms import StringField, validators
 
 from app.developer.base import developer_bp
 from app.extensions import db
 from app.models import Client, RedirectUri
 
 
-class EditClientForm(Form):
+class EditClientForm(FlaskForm):
     name = StringField("Name", validators=[validators.DataRequired()])
 
 

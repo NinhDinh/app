@@ -1,13 +1,14 @@
 from flask import request, flash, render_template, redirect, url_for, session
 from flask_login import login_user
-from wtforms import Form, StringField, validators
+from flask_wtf import FlaskForm
+from wtforms import StringField, validators
 
 from app.auth.base import auth_bp
 from app.log import LOG
 from app.models import User
 
 
-class LoginForm(Form):
+class LoginForm(FlaskForm):
     email = StringField("Email", validators=[validators.DataRequired()])
     password = StringField("Password", validators=[validators.DataRequired()])
 

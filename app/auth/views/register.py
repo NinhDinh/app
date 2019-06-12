@@ -1,17 +1,17 @@
 from flask import request, flash, render_template
+from flask_wtf import FlaskForm
 from wtforms import StringField, validators
 
 from app import email
 from app.auth.base import auth_bp
 from app.config import URL
 from app.extensions import db
-from app.form import BaseForm
 from app.log import LOG
 from app.models import User, ActivationCode
 from app.utils import random_string
 
 
-class RegisterForm(BaseForm):
+class RegisterForm(FlaskForm):
     email = StringField("Email", validators=[validators.DataRequired()])
     password = StringField(
         "Password", validators=[validators.DataRequired(), validators.Length(min=8)]
