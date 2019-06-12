@@ -25,7 +25,12 @@ def authorize():
 
     # sanity check
     if not response_type == "code":
+        LOG.d("incorrect response_type %s", response_type)
         return "response_type must be code", 400
+
+    if not redirect_uri:
+        LOG.d("no redirect uri")
+        return "redirect_uri must be set", 400
 
     client = Client.get_by(client_id=client_id)
     if not client:
