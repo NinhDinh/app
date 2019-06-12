@@ -4,6 +4,7 @@ from datetime import datetime
 import bcrypt
 from flask_login import UserMixin
 
+from app import s3
 from app.config import SCOPE_NAME, SCOPE_EMAIL
 from app.extensions import db
 from app.log import LOG
@@ -94,6 +95,13 @@ class ActivationCode(db.Model, ModelMixin):
     user = db.relationship(User)
 
 
+class File(db.Model, ModelMixin):
+    path = db.Column(db.String(128), unique=True)
+
+    def get_url(self):
+        return s3.get_url(self.path)
+
+
 # <<< OAUTH models >>>
 
 client_scope = db.Table(
@@ -124,8 +132,10 @@ class Client(db.Model, ModelMixin):
 
     # user who created this client
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
+    icon_id = db.Column(db.ForeignKey(File.id), nullable=True)
 
     scopes = db.relationship("Scope", secondary=client_scope, lazy="subquery")
+    icon = db.relationship(File)
 
     def nb_user(self):
         return ClientUser.filter_by(client_id=self.id).count()
