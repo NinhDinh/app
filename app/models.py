@@ -154,6 +154,9 @@ class GenEmail(db.Model, ModelMixin):
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
     email = db.Column(db.String(128), unique=True)
 
+    def __repr__(self):
+        return f"<GenEmail {self.id} {self.email}>"
+
 
 class ClientUser(db.Model, ModelMixin):
     __table_args__ = (
