@@ -5,7 +5,7 @@
 {% set active_page = "developer" %}
 
 {% block title %}
-    Developer
+  Developer
 {% endblock %}
 
 {% block default_content %}
@@ -22,6 +22,7 @@
           <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
             <thead>
             <tr>
+              <th class="text-center w-1"><i class="icon-people"></i></th>
               <th>Name</th>
               <th>OAuth Client ID</th>
               <th class="text-center">OAuth Client Secret</th>
@@ -34,6 +35,14 @@
             <tbody>
             {% for client in clients %}
               <tr>
+                <td class="text-center">
+                  {% if client.icon_id %}
+                    <div class="avatar d-block" style="background-image: url({{ client.icon.get_url() }})">
+                      <span class="avatar-status bg-green"></span>
+                    </div>
+                  {% endif %}
+                </td>
+
                 <td>
                   <div>{{ client.name }} </div>
                   <div class="small text-muted">
