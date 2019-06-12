@@ -82,6 +82,7 @@
             <tr>
               <th>Email</th>
               <th>Actions</th>
+              <th>Enable/Disable Email Forwarding</th>
               <th>Created At</th>
             </tr>
             </thead>
@@ -96,7 +97,7 @@
 
                 <td>
                   <div class="btn-group">
-                    <button class="clipboard btn btn-secondary"
+                    <button class="clipboard btn btn-secondary btn-sm"
                             data-clipboard-text="{{ gen_email.email }}">
                       Copy
                     </button>
@@ -105,10 +106,22 @@
                       <input type="hidden" name="form-name" value="trigger-email">
                       <input type="hidden" name="gen-email-id" value="{{ gen_email.id }}">
 
-                      <button class="btn btn-secondary">Trigger Test Email</button>
+                      <button class="btn btn-secondary btn-sm">Trigger Test Email</button>
                     </form>
                   </div>
+                </td>
 
+                <td>
+                  <form method="post">
+                    <input type="hidden" name="form-name" value="switch-email-forwarding">
+                    <input type="hidden" name="gen-email-id" value="{{ gen_email.id }}">
+
+                    <label class="custom-switch">
+                      <input type="checkbox" class="custom-switch-input"
+                          {{ "checked" if gen_email.enabled else "" }}>
+                      <span class="custom-switch-indicator"></span>
+                    </label>
+                  </form>
                 </td>
 
                 <td>
@@ -136,7 +149,7 @@
       }
     });
 
-    require(['clipboard', 'notie'], function (Clipboard, notie) {
+    require(['clipboard', 'notie', 'jquery'], function (Clipboard, notie, $) {
       var clipboard = new Clipboard('.clipboard');
 
       clipboard.on('success', function (e) {
@@ -148,6 +161,28 @@
 
         e.clearSelection();
       });
-    });
+
+      $(".custom-switch-input").change(function (e) {
+        var message = "";
+
+        if (e.target.checked) {
+          message = `After this, you will start receiving email sent to this email address, please confirm`;
+        } else {
+          message = `After this, you will stop receiving email sent to this email address, please confirm`;
+        }
+
+        notie.confirm({
+          text: message,
+          cancelCallback: () => {
+            // reset to the original value
+            var oldValue = !$(this).prop("checked");
+            $(this).prop("checked", oldValue);
+          },
+          submitCallback: () => {
+            $(this).closest("form").submit();
+          }
+        });
+      })
+    })
   </script>
 {% endblock %}

@@ -183,6 +183,8 @@ class GenEmail(db.Model, ModelMixin):
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
     email = db.Column(db.String(128), unique=True)
 
+    enabled = db.Column(db.Boolean(), default=True, nullable=False)
+
     def __repr__(self):
         return f"<GenEmail {self.id} {self.email}>"
 

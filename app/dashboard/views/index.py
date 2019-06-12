@@ -44,7 +44,26 @@ Son - SimpleLogin Founder.<br>
             LOG.d("generate new email %s for user %s", random_email, current_user)
             flash(f"Email {random_email} has been created", "success")
 
-            return redirect(url_for("dashboard.index"))
+        elif request.form.get("form-name") == "switch-email-forwarding":
+            gen_email_id = request.form.get("gen-email-id")
+            gen_email: GenEmail = GenEmail.get(gen_email_id)
+
+            LOG.d("switch email forwarding for %s", gen_email)
+
+            gen_email.enabled = not gen_email.enabled
+            if gen_email.enabled:
+                flash(
+                    f"The email forwarding for {gen_email.email} has been enabled",
+                    "success",
+                )
+            else:
+                flash(
+                    f"The email forwarding for {gen_email.email} has been disabled",
+                    "warning",
+                )
+            db.session.commit()
+
+        return redirect(url_for("dashboard.index"))
 
     client_users = (
         ClientUser.filter_by(user_id=current_user.id)

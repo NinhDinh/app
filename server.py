@@ -56,11 +56,12 @@ def fake_data():
     Scope.create(name=SCOPE_EMAIL)
     db.session.commit()
 
+    # Create a user
     user = User.create(id=1, email="john@wick.com", name="John Wick", activated=True)
     user.set_password("password")
-    db.session.add(user)
     db.session.commit()
 
+    # Create a client
     client1 = Client.create_new(name="Continental", user_id=user.id)
     client1.client_id = "client-id"
     client1.client_secret = "client-secret"
@@ -70,10 +71,16 @@ def fake_data():
     RedirectUri.create(client_id=client1.id, uri="http://localhost:7000/callback")
     db.session.commit()
 
+    # Create another client
+    client2 = Client.create_new(name="Rome", user_id=user.id)
+    db.session.commit()
+
     gen_email = GenEmail.create(user_id=user.id, email="john-random@sl")
+    GenEmail.create(user_id=user.id, email="john-random-2@sl")
     db.session.commit()
 
     ClientUser.create(client_id=client1.id, user_id=user.id, gen_email_id=gen_email.id)
+    ClientUser.create(client_id=client2.id, user_id=user.id)
     db.session.commit()
 
 
