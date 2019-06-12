@@ -129,6 +129,7 @@ class Client(db.Model, ModelMixin):
     client_secret = db.Column(db.String(128), nullable=False)
 
     name = db.Column(db.String(128))
+    home_url = db.Column(db.String(1024))
 
     # user who created this client
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
@@ -141,7 +142,7 @@ class Client(db.Model, ModelMixin):
         return ClientUser.filter_by(client_id=self.id).count()
 
     @classmethod
-    def create_new(cls, name, user_id) -> "Client":
+    def create_new(cls, name, user_id, home_url=None) -> "Client":
         # generate a client-id
         client_id = generate_client_id(name)
         client_secret = random_string(40)
