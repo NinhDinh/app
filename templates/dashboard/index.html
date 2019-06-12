@@ -9,16 +9,9 @@
 {% endblock %}
 
 {% block default_content %}
-  <div class="row">
-    <div class="col">
-      <form method="post">
-        <button class="btn btn-success">Generate new email</button>
-      </form>
-    </div>
-  </div>
 
   <div class="page-header">
-    <h3 class="page-title">Emails used by apps</h3>
+    <h3 class="page-title">Apps</h3>
   </div>
 
   <div class="row row-cards row-deck mt-4">
@@ -28,8 +21,8 @@
           <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
             <thead>
             <tr>
-              <th>Email</th>
-              <th>Used by App</th>
+              <th>App</th>
+              <th>Information</th>
               <th class="text-center">First used</th>
               <!--<th class="text-center">Last used</th>-->
             </tr>
@@ -38,25 +31,17 @@
             {% for client_user in client_users %}
             <tr>
               <td>
-                <div>
-                  {{ client_user.get_email() }}
-                </div>
-                <button class="clipboard btn btn-outline-secondary btn-sm"
-                        data-clipboard-text="{{ client_user.get_email() }}">
-                  Copy
-                </button>
-
-
-                {% if client_user.gen_email %}
-                  <div class="small text-muted">
-                    Created: {{ client_user.gen_email.created_at | dt }}
-                  </div>
-                {% endif %}
+                {{ client_user.client.name }}
               </td>
 
               <td>
-                {{ client_user.client.name }}
+                {% for scope, val in client_user.get_user_info().items() %}
+                  <div>
+                    {{ scope }}: {{ val }}
+                  </div>
+                {% endfor %}
               </td>
+
 
               <td class="text-center">
                 {{ client_user.created_at | dt }}
@@ -79,8 +64,12 @@
     </div>
   </div>
 
-  <div class="page-header">
-    <h3 class="page-title">All other generated emails</h3>
+
+  <div class="page-header row">
+    <h3 class="page-title col">All generated emails</h3>
+    <form method="post" class="col text-right">
+      <button class="btn btn-success">Generate new email</button>
+    </form>
   </div>
 
   <div class="row row-cards row-deck mt-4">
