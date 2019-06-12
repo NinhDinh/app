@@ -30,3 +30,9 @@ ENABLE_SENTRY = "ENABLE_SENTRY" in os.environ
 ENV = os.environ.get("ENV") or "local"
 
 print("email domain is", EMAIL_DOMAIN)
+
+
+AWS_REGION = "eu-west-3"
+BUCKET = os.environ.get("BUCKET") or "local.sl"
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
