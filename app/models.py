@@ -7,6 +7,7 @@ from flask_login import UserMixin
 from app.config import SCOPE_NAME, SCOPE_EMAIL
 from app.extensions import db
 from app.log import LOG
+from app.utils import convert_to_id, random_string
 
 
 class ModelMixin(object):
@@ -102,6 +103,19 @@ client_scope = db.Table(
 )
 
 
+def generate_client_id(client_name) -> str:
+    client_id = convert_to_id(client_name) + "-" + random_string()
+
+    # check that the client does not exist yet
+    if not Client.get_by(client_id=client_id):
+        LOG.debug("generate client_id %s", client_id)
+        return client_id
+
+    # Rerun the function
+    LOG.warning("client_id %s already exists, generate a new client_id", client_id)
+    return generate_client_id(client_name)
+
+
 class Client(db.Model, ModelMixin):
     client_id = db.Column(db.String(128), unique=True, nullable=False)
     client_secret = db.Column(db.String(128), nullable=False)
@@ -115,6 +129,21 @@ class Client(db.Model, ModelMixin):
 
     def nb_user(self):
         return ClientUser.filter_by(client_id=self.id).count()
+
+    @classmethod
+    def create_new(cls, name, user_id) -> "Client":
+        # generate a client-id
+        client_id = generate_client_id(name)
+        client_secret = random_string(40)
+        client = Client.create(
+            name=name, client_id=client_id, client_secret=client_secret, user_id=user_id
+        )
+
+        # By default, add email and name scope
+        client.scopes.append(Scope.get_by(name=SCOPE_NAME))
+        client.scopes.append(Scope.get_by(name=SCOPE_EMAIL))
+
+        return client
 
 
 class RedirectUri(db.Model, ModelMixin):

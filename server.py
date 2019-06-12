@@ -52,36 +52,28 @@ def fake_data():
     db.create_all()
 
     # fake data
+    Scope.create(name=SCOPE_NAME)
+    Scope.create(name=SCOPE_EMAIL)
+    db.session.commit()
 
     user = User.create(id=1, email="john@wick.com", name="John Wick", activated=True)
     user.set_password("password")
     db.session.add(user)
     db.session.commit()
 
-    client = Client.create(
-        client_id="client-id",
-        client_secret="client-secret",
-        name="Continental",
-        user_id=user.id,
-    )
+    client1 = Client.create_new(name="Continental", user_id=user.id)
+    client1.client_id = "client-id"
+    client1.client_secret = "client-secret"
     db.session.commit()
 
-    RedirectUri.create(client_id=client.id, uri="http://sl-client:7000/callback")
-    RedirectUri.create(client_id=client.id, uri="http://localhost:7000/callback")
-    db.session.commit()
-
-    scope_name = Scope.create(name=SCOPE_NAME)
-    scope_email = Scope.create(name=SCOPE_EMAIL)
-    db.session.commit()
-
-    client.scopes.append(scope_name)
-    client.scopes.append(scope_email)
+    RedirectUri.create(client_id=client1.id, uri="http://sl-client:7000/callback")
+    RedirectUri.create(client_id=client1.id, uri="http://localhost:7000/callback")
     db.session.commit()
 
     gen_email = GenEmail.create(user_id=user.id, email="john-random@sl")
     db.session.commit()
 
-    ClientUser.create(client_id=client.id, user_id=user.id, gen_email_id=gen_email.id)
+    ClientUser.create(client_id=client1.id, user_id=user.id, gen_email_id=gen_email.id)
     db.session.commit()
 
 
