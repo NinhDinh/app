@@ -1,8 +1,7 @@
 from IPython import embed
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
-from app.config import DB_URI, SCOPE_NAME, SCOPE_EMAIL
-from app.log import LOG
+from app.config import DB_URI
 from app.models import *
 from server import create_app
 
@@ -25,8 +24,27 @@ def create_db():
         db.session.commit()
 
 
-def drop_db():
+def add_real_data():
+    """after the db is reset, add some accounts
+    TODO: remove this after adding alembic"""
+    user = User.create(email="nguyenkims@gmail.com", name="Son GM", activated=True)
+    user.set_password("password")
+    db.session.commit()
+
+    # Create a client
+    client1 = Client.create_new(name="Demo", user_id=user.id)
+    client1.client_id = "client-id"
+    client1.client_secret = "client-secret"
+    db.session.commit()
+
+    RedirectUri.create(client_id=client1.id, uri="http://demo.sl.meo.ovh/callback")
+    db.session.commit()
+
+
+def reset_db():
     drop_database(DB_URI)
+    create_db()
+    add_real_data()
 
 
 app = create_app()
