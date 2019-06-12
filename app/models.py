@@ -4,7 +4,9 @@ from datetime import datetime
 import bcrypt
 from flask_login import UserMixin
 
+from app.config import SCOPE_NAME, SCOPE_EMAIL
 from app.extensions import db
+from app.log import LOG
 
 
 class ModelMixin(object):
@@ -171,3 +173,25 @@ class ClientUser(db.Model, ModelMixin):
 
     def get_email(self):
         return self.gen_email.email if self.gen_email_id else self.user.email
+
+    def get_user_info(self) -> dict:
+        """return user info according to client scope
+        Return dict with key being scope name
+
+        """
+        res = {}
+        for scope in self.client.scopes:
+            if scope.name == SCOPE_NAME:
+                res[SCOPE_NAME] = self.user.name
+            elif scope.name == SCOPE_EMAIL:
+                # Use generated email
+                if self.gen_email_id:
+                    LOG.debug(
+                        "Use gen email for user %s, client %s", self.user, self.client
+                    )
+                    res[SCOPE_EMAIL] = self.gen_email.email
+                # Use user original email
+                else:
+                    res[SCOPE_EMAIL] = self.user.email
+
+        return res

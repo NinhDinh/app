@@ -6,7 +6,6 @@ from app.extensions import db
 from app.log import LOG
 from app.models import Client, AuthorizationCode, ClientUser, GenEmail, RedirectUri
 from app.oauth.base import oauth_bp
-from app.oauth.views.user_info import get_user_info
 from app.utils import random_string
 
 
@@ -40,9 +39,12 @@ def authorize():
 
     if current_user.is_authenticated:
         # user has already allowed this client
-        if ClientUser.get_by(client_id=client.id, user_id=current_user.id):
+        client_user: ClientUser = ClientUser.get_by(
+            client_id=client.id, user_id=current_user.id
+        )
+        if client_user:
             LOG.debug("user %s has already allowed client %s", current_user, client)
-            user_info = get_user_info(current_user, client)
+            user_info = client_user.get_user_info()
 
             return render_template(
                 "oauth/already_authorize.html",
