@@ -44,7 +44,13 @@
                 </td>
 
                 <td>
-                  <div>{{ client.name }} </div>
+                  <div>
+                    {% if client.home_url %}
+                      <a href="{{ client.home_url }}">{{ client.name }}</a>
+                    {% else %}
+                      {{ client.name }}
+                    {% endif %}
+                  </div>
                   <div class="small text-muted">
                     Created at: {{ client.created_at |dt }}
                   </div>

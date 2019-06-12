@@ -17,6 +17,7 @@ from app.utils import random_string
 class NewClientForm(FlaskForm):
     name = StringField("Name", validators=[validators.DataRequired()])
     icon = FileField("Icon")
+    home_url = StringField("Home Url")
 
 
 @developer_bp.route("/new_client", methods=["GET", "POST"])
@@ -26,7 +27,9 @@ def new_client():
 
     if request.method == "POST":
         if form.validate():
-            client = Client.create_new(form.name.data, current_user.id)
+            client = Client.create_new(
+                form.name.data, current_user.id, form.home_url.data
+            )
             db.session.commit()
 
             if form.icon.data:

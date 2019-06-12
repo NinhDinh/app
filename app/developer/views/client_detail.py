@@ -17,6 +17,7 @@ from app.utils import random_string
 class EditClientForm(FlaskForm):
     name = StringField("Name", validators=[validators.DataRequired()])
     icon = FileField("Icon")
+    home_url = StringField("Home Url")
 
 
 @developer_bp.route("/clients/<client_id>", methods=["GET", "POST"])
@@ -36,6 +37,7 @@ def client_detail(client_id):
     if request.method == "POST":
         if form.validate():
             client.name = form.name.data
+            client.home_url = form.home_url.data
 
             if form.icon.data:
                 # todo: remove current icon if any
