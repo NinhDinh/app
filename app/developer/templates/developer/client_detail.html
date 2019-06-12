@@ -5,44 +5,55 @@
 {% set active_page = "developer" %}
 
 {% block title %}
-    Developer - Edit client
+  Developer - Edit client
 {% endblock %}
 
 {% block default_content %}
-    <form method="post">
-      {{ form.csrf_token }}
+  <form method="post" enctype="multipart/form-data">
+    {{ form.csrf_token }}
 
-      <div class="form-group">
-        <label class="form-label">App Name</label>
-        {{ form.name(class="form-control") }}
-        {{ render_field_errors(form.name) }}
-      </div>
+    <div class="form-group">
+      <label class="form-label">App Name</label>
+      {{ form.name(class="form-control", value=client.name) }}
+      {{ render_field_errors(form.name) }}
+    </div>
 
-      <div class="form-group">
-        <label class="form-label">Authorized URIs</label>
 
-        {% for redirect_uri in client.redirect_uris %}
-          <div class="input-group mt-2">
-            <input type="url" name="uri" class="form-control" value="{{ redirect_uri.uri }}" required>
+    <div class="form-group">
+      <div class="form-label">App Icon</div>
+      {{ form.icon(class="form-control-file") }}
+      {{ render_field_errors(form.icon) }}
 
-            <span class="input-group-append">
+      {% if client.icon_id %}
+        <img src="{{ client.icon.get_url() }}" class="img-thumbnail">
+      {% endif %}
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Authorized URIs</label>
+
+      {% for redirect_uri in client.redirect_uris %}
+        <div class="input-group mt-2">
+          <input type="url" name="uri" class="form-control" value="{{ redirect_uri.uri }}" required>
+
+          <span class="input-group-append">
               <button class="remove-uri btn btn-primary" type="button">
                 <i class="fe fe-x"></i>
               </button>
             </span>
 
-          </div>
-        {% endfor %}
-
-        <div id="new-uris">
-          <!-- New uri will be put here -->
         </div>
+      {% endfor %}
 
-        <button type="button" id="create-new-uri" class="mt-2 btn btn-outline-secondary">Add new uri</button>
+      <div id="new-uris">
+        <!-- New uri will be put here -->
       </div>
 
-      <button type="submit" class="btn btn-primary btn-lg">Update</button>
-    </form>
+      <button type="button" id="create-new-uri" class="mt-2 btn btn-outline-secondary">Add new uri</button>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-lg">Update</button>
+  </form>
 
   <!-- template for new uri -->
   <div class="input-group mt-2" id="hidden-uri" style="display: none">
