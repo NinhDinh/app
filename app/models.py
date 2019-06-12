@@ -179,7 +179,8 @@ class ClientUser(db.Model, ModelMixin):
         Return dict with key being scope name
 
         """
-        res = {}
+        res = {"id": self.id}
+
         for scope in self.client.scopes:
             if scope.name == SCOPE_NAME:
                 res[SCOPE_NAME] = self.user.name
