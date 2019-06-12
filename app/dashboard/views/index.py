@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from sqlalchemy.orm import joinedload
 
-from app import email
+from app import email_utils
 from app.dashboard.base import dashboard_bp
 from app.extensions import db
 from app.log import LOG
@@ -20,7 +20,7 @@ def index():
             gen_email = GenEmail.get(gen_email_id)
 
             LOG.d("trigger an email to %s", gen_email)
-            email.send(
+            email_utils.send(
                 gen_email.email,
                 "A Test Email",
                 f"""

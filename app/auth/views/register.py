@@ -2,7 +2,7 @@ from flask import request, flash, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, validators
 
-from app import email
+from app import email_utils
 from app.auth.base import auth_bp
 from app.config import URL
 from app.extensions import db
@@ -41,7 +41,7 @@ def register():
 
             # Send user activation email
             activation_link = f"{URL}/auth/activate?code={activation.code}"
-            email.send(
+            email_utils.send(
                 user.email,
                 "Welcome to SimpleLogin! Confirm your email",
                 html_content=f"""
