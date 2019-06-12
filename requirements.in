@@ -9,8 +9,9 @@ bcrypt
 python-dotenv
 ipython
 sqlalchemy_utils
-psycopg2
+psycopg2-binary
 sentry_sdk
 blinker
 arrow
 sendgrid
+Flask-WTF
