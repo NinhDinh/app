@@ -164,6 +164,12 @@
         e.clearSelection();
       });
 
+      // the modal does not get close when user clicks outside of modal
+      // necessary for obligatory modal such as the one displayed when user enable/display email forwarding
+      notie.setOptions({
+        overlayClickDismiss: false,
+      });
+
       $(".custom-switch-input").change(function (e) {
         var message = "";
 
