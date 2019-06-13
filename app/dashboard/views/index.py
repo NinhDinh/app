@@ -72,7 +72,11 @@ Son - SimpleLogin Founder.<br>
         .all()
     )
 
-    gen_emails = GenEmail.filter_by(user_id=current_user.id).all()
+    sorted(client_users, key=lambda cu: cu.client.name)
+
+    gen_emails = (
+        GenEmail.filter_by(user_id=current_user.id).order_by(GenEmail.email).all()
+    )
 
     return render_template(
         "dashboard/index.html", client_users=client_users, gen_emails=gen_emails
