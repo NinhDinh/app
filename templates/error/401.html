@@ -1,9 +1,15 @@
 {% extends "error.html" %}
 
 {% block error_name %}
-  401
+  You need to login to see this page.
 {% endblock %}
 
 {% block error_description %}
-  We are sorry but you are not authorized to access this page
+  We are sorry but you are not authorized to access this page.
+{% endblock %}
+
+{% block suggestion %}
+  <a class="btn btn-primary" href="{{ url_for('auth.login') }}">
+    <i class="fe fe-log-in mr-2"></i>Login
+  </a>
 {% endblock %}

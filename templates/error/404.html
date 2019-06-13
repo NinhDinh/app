@@ -7,3 +7,9 @@
 {% block error_description %}
   This page does not exist.
 {% endblock %}
+
+{% block suggestion %}
+  <a class="btn btn-primary" href="javascript:history.back()">
+    <i class="fe fe-arrow-left mr-2"></i>Go Back
+  </a>
+{% endblock %}
