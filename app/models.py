@@ -5,7 +5,7 @@ import bcrypt
 from flask_login import UserMixin
 
 from app import s3
-from app.config import SCOPE_NAME, SCOPE_EMAIL
+from app.config import SCOPE_NAME, SCOPE_EMAIL, URL
 from app.extensions import db
 from app.log import LOG
 from app.utils import convert_to_id, random_string
@@ -130,6 +130,7 @@ class Client(db.Model, ModelMixin):
 
     name = db.Column(db.String(128))
     home_url = db.Column(db.String(1024))
+    published = db.Column(db.Boolean, default=False, nullable=False)
 
     # user who created this client
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
@@ -142,7 +143,7 @@ class Client(db.Model, ModelMixin):
         return ClientUser.filter_by(client_id=self.id).count()
 
     @classmethod
-    def create_new(cls, name, user_id, home_url=None) -> "Client":
+    def create_new(cls, name, user_id) -> "Client":
         # generate a client-id
         client_id = generate_client_id(name)
         client_secret = random_string(40)
@@ -155,6 +156,12 @@ class Client(db.Model, ModelMixin):
         client.scopes.append(Scope.get_by(name=SCOPE_EMAIL))
 
         return client
+
+    def get_icon_url(self):
+        if self.icon_id:
+            return self.icon.get_url()
+        else:
+            return URL + "/static/default-icon.svg"
 
 
 class RedirectUri(db.Model, ModelMixin):
