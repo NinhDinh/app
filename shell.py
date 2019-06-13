@@ -40,6 +40,10 @@ def add_real_data():
     RedirectUri.create(client_id=client1.id, uri="http://demo.sl.meo.ovh/callback")
     db.session.commit()
 
+    user2 = User.create(email="nguyenkims@hotmail.com", name="Son HM", activated=True)
+    user2.set_password("password")
+    db.session.commit()
+
 
 def reset_db():
     drop_database(DB_URI)
