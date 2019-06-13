@@ -29,6 +29,7 @@
               <th>Scopes</th>
               <th>Number Users</th>
               <th>Edit</th>
+              <th>Publish</th>
               <th>Delete</th>
             </tr>
             </thead>
@@ -89,6 +90,19 @@
                 </td>
 
                 <td>
+                  <form method="post">
+                    <input type="hidden" name="form-name" value="switch-client-publish">
+                    <input type="hidden" name="client-id" value="{{ client.id }}">
+
+                    <label class="custom-switch">
+                      <input type="checkbox" class="custom-switch-input"
+                          {{ "checked" if client.published else "" }}>
+                      <span class="custom-switch-indicator"></span>
+                    </label>
+                  </form>
+                </td>
+
+                <td>
                   <form method="post"
                         onsubmit="return confirm('Please make sure no user is using this client. This operation is not reversible');">
                     <input type="hidden" name="form-name" value="delete-client">
@@ -132,6 +146,34 @@
 
         e.clearSelection();
       });
+
+      // the modal does not get close when user clicks outside of modal
+      // necessary for obligatory modal such as the one displayed when user enable/display email forwarding
+      notie.setOptions({
+        overlayClickDismiss: false,
+      });
+
+      $(".custom-switch-input").change(function (e) {
+        // Only ask for confirmation when publishing, not when un-publishing
+        if (e.target.checked) {
+          var message = `After this, your app/website will made available in "Discover", please confirm`;
+
+          notie.confirm({
+            text: message,
+            cancelCallback: () => {
+              // reset to the original value
+              var oldValue = !$(this).prop("checked");
+              $(this).prop("checked", oldValue);
+            },
+            submitCallback: () => {
+              $(this).closest("form").submit();
+            }
+          });
+        } else {
+          $(this).closest("form").submit();
+        }
+      })
+
     });
   </script>
 {% endblock %}
