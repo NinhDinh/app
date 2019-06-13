@@ -134,7 +134,7 @@
       }
     });
 
-    require(['clipboard', 'notie'], function (Clipboard, notie) {
+    require(['clipboard', 'notie', 'jquery'], function (Clipboard, notie, $) {
       var clipboard = new Clipboard('.btn');
 
       clipboard.on('success', function (e) {
