@@ -10,6 +10,7 @@ from app.auth.base import auth_bp
 from app.config import SCOPE_NAME, SCOPE_EMAIL, DB_URI, FLASK_SECRET, ENABLE_SENTRY, ENV
 from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
+from app.discover.base import discover_bp
 from app.extensions import db, login_manager
 from app.log import LOG
 from app.models import Client, User, Scope, ClientUser, GenEmail, RedirectUri
@@ -63,8 +64,10 @@ def fake_data():
 
     # Create a client
     client1 = Client.create_new(name="Continental", user_id=user.id)
+    client1.home_url = "http://sl-client:7000"
     client1.client_id = "client-id"
     client1.client_secret = "client-secret"
+    client1.published = True
     db.session.commit()
 
     RedirectUri.create(client_id=client1.id, uri="http://sl-client:7000/callback")
@@ -97,6 +100,7 @@ def register_blueprints(app: Flask):
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(developer_bp)
     app.register_blueprint(oauth_bp)
+    app.register_blueprint(discover_bp)
 
 
 def set_index_page(app):

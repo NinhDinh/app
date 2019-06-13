@@ -27,9 +27,8 @@ def new_client():
 
     if request.method == "POST":
         if form.validate():
-            client = Client.create_new(
-                form.name.data, current_user.id, form.home_url.data
-            )
+            client = Client.create_new(form.name.data, current_user.id)
+            client.home_url = form.home_url.data
             db.session.commit()
 
             if form.icon.data:

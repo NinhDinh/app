@@ -8,9 +8,17 @@
   </li>
 
   <li class="nav-item">
+    <a href="{{ url_for('discover.index') }}"
+       class="nav-link {{ 'active' if active_page == 'discover' }}">
+      <i class="fe fe-globe"></i>
+      Discover
+    </a>
+  </li>
+
+  <li class="nav-item">
     <a href="{{ url_for('developer.index') }}"
        class="nav-link {{ 'active' if active_page == 'developer' }}">
-      <i class="fe fe-code"></i>
+      <i class="fe fe-terminal"></i>
       Developer
     </a>
   </li>
