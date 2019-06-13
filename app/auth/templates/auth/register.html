@@ -13,15 +13,15 @@
       <div class="card-title">Create new account</div>
 
       <div class="form-group">
-        <label class="form-label">Email address</label>
-        {{ form.email(class="form-control", type="email") }}
-        {{ render_field_errors(form.email) }}
+        <label class="form-label">How should we call you?</label>
+        {{ form.name(class="form-control") }}
+        {{ render_field_errors(form.name) }}
       </div>
 
       <div class="form-group">
-        <label class="form-label">Name</label>
-        {{ form.name(class="form-control") }}
-        {{ render_field_errors(form.name) }}
+        <label class="form-label">Email address</label>
+        {{ form.email(class="form-control", type="email") }}
+        {{ render_field_errors(form.email) }}
       </div>
 
       <div class="form-group">
