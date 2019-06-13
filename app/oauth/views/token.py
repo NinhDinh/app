@@ -68,7 +68,7 @@ def get_access_token():
             "access_token": oauth_token.access_token,
             "token_type": "bearer",
             "expires_in": 3600,
-            "scope": "create delete",
+            "scope": "",
             "user": user_data,
         }
     )

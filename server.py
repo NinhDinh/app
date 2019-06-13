@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import arrow
 import sentry_sdk
@@ -7,7 +8,15 @@ from flask_login import current_user
 from sentry_sdk.integrations.flask import FlaskIntegration
 
 from app.auth.base import auth_bp
-from app.config import SCOPE_NAME, SCOPE_EMAIL, DB_URI, FLASK_SECRET, ENABLE_SENTRY, ENV
+from app.config import (
+    SCOPE_NAME,
+    SCOPE_EMAIL,
+    DB_URI,
+    FLASK_SECRET,
+    ENABLE_SENTRY,
+    ENV,
+    URL,
+)
 from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
 from app.discover.base import discover_bp
@@ -151,6 +160,10 @@ def jinja2_filter(app):
         return dt.humanize()
 
     app.jinja_env.filters["dt"] = format_datetime
+
+    @app.context_processor
+    def inject_stage_and_region():
+        return dict(year=datetime.now().year, url=URL)
 
 
 def init_extensions(app: Flask):
