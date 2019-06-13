@@ -18,8 +18,8 @@
 
   <!-- Generated: 2019-04-04 16:55:45 +0200 -->
   <title>
-        {% block title %}{% endblock %} Simple Login
-    </title>
+    {% block title %}{% endblock %} Simple Login
+  </title>
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet"
@@ -63,10 +63,15 @@
       <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
       {% if messages %}
         {% for category, message in messages %}
-          <div class="alert alert-{{ category }} alert-dismissible alert-auto-dismiss" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
-            {{ message }}
-          </div>
+          <script>
+            require(['clipboard', 'notie'], function (Clipboard, notie) {
+              notie.alert({
+                type: "{{ category }}",
+                text: "{{ message }}",
+                time: 1
+              })
+            })
+          </script>
         {% endfor %}
       {% endif %}
     {% endwith %}
@@ -75,21 +80,6 @@
   {% block content %}
   {% endblock %}
 </div>
-
-<script>
-  require(["jquery"], function ($) {
-    console.log("setup auto-dismiss alert");
-    $('.alert-auto-dismiss').each(function (index, element) {
-      var $element = $(element),
-        timeout = 3000;
-
-      setTimeout(function () {
-        $element.alert('close');
-      }, timeout);
-    });
-
-  })
-</script>
 
 <!-- For additional script -->
 {% block script %}
