@@ -1,3 +1,4 @@
+import flask_migrate
 from IPython import embed
 from sqlalchemy_utils import create_database, database_exists, drop_database
 
@@ -15,7 +16,8 @@ def create_db():
 
     with app.app_context():
         # Create all tables
-        db.create_all()
+        # Use flask-migrate instead of db.create_all()
+        flask_migrate.upgrade()
 
         scope_name = Scope.create(name=SCOPE_NAME)
         db.session.add(scope_name)
