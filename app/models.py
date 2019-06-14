@@ -69,7 +69,7 @@ class User(db.Model, ModelMixin, UserMixin):
     email = db.Column(db.String(128), unique=True, nullable=False)
     salt = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    name = db.Column(db.String(128))
+    name = db.Column(db.String(128), nullable=False)
 
     activated = db.Column(db.Boolean, default=False, nullable=False)
 
@@ -89,14 +89,16 @@ class User(db.Model, ModelMixin, UserMixin):
 
 
 class ActivationCode(db.Model, ModelMixin):
+    """For activate user account"""
+
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
-    code = db.Column(db.String(128), unique=True)
+    code = db.Column(db.String(128), unique=True, nullable=False)
 
     user = db.relationship(User)
 
 
 class File(db.Model, ModelMixin):
-    path = db.Column(db.String(128), unique=True)
+    path = db.Column(db.String(128), unique=True, nullable=False)
 
     def get_url(self):
         return s3.get_url(self.path)
@@ -106,8 +108,20 @@ class File(db.Model, ModelMixin):
 
 client_scope = db.Table(
     "client_scope",
-    db.Column("client_id", db.Integer, db.ForeignKey("client.id"), primary_key=True),
-    db.Column("scope_id", db.Integer, db.ForeignKey("scope.id"), primary_key=True),
+    db.Column(
+        "client_id",
+        db.Integer,
+        db.ForeignKey("client.id"),
+        primary_key=True,
+        nullable=False,
+    ),
+    db.Column(
+        "scope_id",
+        db.Integer,
+        db.ForeignKey("scope.id"),
+        primary_key=True,
+        nullable=False,
+    ),
 )
 
 
@@ -128,7 +142,7 @@ class Client(db.Model, ModelMixin):
     client_id = db.Column(db.String(128), unique=True, nullable=False)
     client_secret = db.Column(db.String(128), nullable=False)
 
-    name = db.Column(db.String(128))
+    name = db.Column(db.String(128), nullable=False)
     home_url = db.Column(db.String(1024))
     published = db.Column(db.Boolean, default=False, nullable=False)
 
@@ -192,14 +206,14 @@ class OauthToken(db.Model, ModelMixin):
 
 
 class Scope(db.Model, ModelMixin):
-    name = db.Column(db.String(128), unique=True)
+    name = db.Column(db.String(128), unique=True, nullable=False)
 
 
 class GenEmail(db.Model, ModelMixin):
     """Generated email"""
 
     user_id = db.Column(db.ForeignKey(User.id), nullable=False)
-    email = db.Column(db.String(128), unique=True)
+    email = db.Column(db.String(128), unique=True, nullable=False)
 
     enabled = db.Column(db.Boolean(), default=True, nullable=False)
 
