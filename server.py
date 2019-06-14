@@ -163,7 +163,7 @@ def jinja2_filter(app):
 
     @app.context_processor
     def inject_stage_and_region():
-        return dict(year=datetime.now().year, url=URL)
+        return dict(YEAR=datetime.now().year, URL=URL, ENABLE_SENTRY=ENABLE_SENTRY)
 
 
 def init_extensions(app: Flask):

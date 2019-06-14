@@ -55,6 +55,9 @@
 
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
 
+  <script src="https://browser.sentry-cdn.com/5.4.0/bundle.min.js" crossorigin="anonymous"></script>
+
+
   <!-- For additional head -->
   {% block head %}
   {% endblock %}
@@ -84,6 +87,13 @@
   {% block content %}
   {% endblock %}
 </div>
+
+<script>
+  {% if ENABLE_SENTRY %}
+    console.log("Init sentry");
+    Sentry.init({dsn: 'https://ad2187ed843340a1b4165bd8d5d6cdce@sentry.io/1478143'});
+  {% endif %}
+</script>
 
 <!-- For additional script -->
 {% block script %}
