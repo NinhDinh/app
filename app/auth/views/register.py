@@ -1,3 +1,5 @@
+import urllib.parse
+
 from flask import request, flash, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, validators
@@ -17,6 +19,10 @@ class RegisterForm(FlaskForm):
         "Password", validators=[validators.DataRequired(), validators.Length(min=8)]
     )
     name = StringField("Name", validators=[validators.DataRequired()])
+
+
+def encode_url(url):
+    return urllib.parse.quote(url, safe="")
 
 
 @auth_bp.route("/register", methods=["GET", "POST"])
@@ -41,6 +47,12 @@ def register():
 
             # Send user activation email
             activation_link = f"{URL}/auth/activate?code={activation.code}"
+            if "next" in request.args:
+                LOG.d("redirect user to %s after activation", request.args["next"])
+                activation_link = (
+                    activation_link + "&next=" + encode_url(request.args["next"])
+                )
+
             email_utils.send(
                 user.email,
                 "Welcome to SimpleLogin! Confirm your email",

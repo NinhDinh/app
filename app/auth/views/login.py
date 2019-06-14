@@ -44,10 +44,6 @@ def login():
                 next_url = request.args.get("next")
                 LOG.debug("redirect user to %s", next_url)
                 return redirect(next_url)
-
-            if "redirect_after_login" in session:
-                LOG.debug("redirect user to %s", session["redirect_after_login"])
-                return redirect(session["redirect_after_login"])
             else:
                 LOG.debug("redirect user to dashboard")
                 return redirect(url_for("dashboard.index"))

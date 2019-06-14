@@ -1,4 +1,4 @@
-from flask import request, render_template, redirect, session
+from flask import request, render_template, redirect
 from flask_login import current_user, login_required
 
 from app.config import EMAIL_DOMAIN
@@ -67,10 +67,11 @@ def authorize():
             )
     else:
         # after user logs in, redirect user back to this page
-        session["redirect_after_login"] = request.url
-
         return render_template(
-            "oauth/authorize_nonlogin_user.html", client=client, state=state
+            "oauth/authorize_nonlogin_user.html",
+            client=client,
+            state=state,
+            next=request.url,
         )
 
 
