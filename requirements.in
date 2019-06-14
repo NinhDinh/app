@@ -16,3 +16,4 @@ arrow
 sendgrid
 Flask-WTF
 boto3
+Flask-Migrate
