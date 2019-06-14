@@ -20,7 +20,7 @@ from app.config import (
 from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
 from app.discover.base import discover_bp
-from app.extensions import db, login_manager
+from app.extensions import db, login_manager, migrate
 from app.log import LOG
 from app.models import Client, User, Scope, ClientUser, GenEmail, RedirectUri
 from app.monitor.base import monitor_bp
@@ -170,6 +170,7 @@ def init_extensions(app: Flask):
     LOG.debug("init extensions")
     login_manager.init_app(app)
     db.init_app(app)
+    migrate.init_app(app)
 
 
 if __name__ == "__main__":
