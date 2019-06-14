@@ -17,10 +17,12 @@ def get_access_token():
     - code: the code obtained in previous step
     """
     # Basic authentication
-    client_id = request.authorization.username
-    client_secret = request.authorization.password
+    oauth_client_id = request.authorization.username
+    oauth_client_secret = request.authorization.password
 
-    client = Client.filter_by(client_id=client_id, client_secret=client_secret).first()
+    client = Client.filter_by(
+        oauth_client_id=oauth_client_id, oauth_client_secret=oauth_client_secret
+    ).first()
 
     if not client:
         return jsonify(error="wrong client-id or client-secret"), 400

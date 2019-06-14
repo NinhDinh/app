@@ -139,8 +139,8 @@ def generate_client_id(client_name) -> str:
 
 
 class Client(db.Model, ModelMixin):
-    client_id = db.Column(db.String(128), unique=True, nullable=False)
-    client_secret = db.Column(db.String(128), nullable=False)
+    oauth_client_id = db.Column(db.String(128), unique=True, nullable=False)
+    oauth_client_secret = db.Column(db.String(128), nullable=False)
 
     name = db.Column(db.String(128), nullable=False)
     home_url = db.Column(db.String(1024))

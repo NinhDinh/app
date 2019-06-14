@@ -18,7 +18,7 @@ def authorize():
     - (optional) state
     - response_type: must be code
     """
-    client_id = request.args.get("client_id")
+    oauth_client_id = request.args.get("client_id")
     state = request.args.get("state")
     response_type = request.args.get("response_type")
     redirect_uri: str = request.args.get("redirect_uri")
@@ -32,9 +32,9 @@ def authorize():
         LOG.d("no redirect uri")
         return "redirect_uri must be set", 400
 
-    client = Client.get_by(client_id=client_id)
+    client = Client.get_by(oauth_client_id=oauth_client_id)
     if not client:
-        return f"no such client with id {client_id}", 400
+        return f"no such client with oauth-client-id {oauth_client_id}", 400
 
     # check if redirect_uri is valid
     # allow localhost by default

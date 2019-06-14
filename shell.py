@@ -33,8 +33,8 @@ def add_real_data():
 
     # Create a client
     client1 = Client.create_new(name="Demo", user_id=user.id)
-    client1.client_id = "client-id"
-    client1.client_secret = "client-secret"
+    client1.oauth_client_id = "client-id"
+    client1.oauth_client_secret = "client-secret"
     db.session.commit()
 
     RedirectUri.create(client_id=client1.id, uri="http://demo.sl.meo.ovh/callback")

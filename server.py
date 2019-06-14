@@ -74,8 +74,8 @@ def fake_data():
     # Create a client
     client1 = Client.create_new(name="Continental", user_id=user.id)
     client1.home_url = "http://sl-client:7000"
-    client1.client_id = "client-id"
-    client1.client_secret = "client-secret"
+    client1.oauth_client_id = "client-id"
+    client1.oauth_client_secret = "client-secret"
     client1.published = True
     db.session.commit()
 
