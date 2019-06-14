@@ -35,7 +35,11 @@
               <td>
                 {% for scope, val in client_user.get_user_info().items() %}
                   <div>
-                    {{ scope }}: {{ val }}
+                    {% if scope == "email" %}
+                      {{ scope }}: <a href="mailto:{{ val }}">{{ val }}</a>
+                    {% elif scope != "id" %}
+                      {{ scope }}: {{ val }}
+                    {% endif %}
                   </div>
                 {% endfor %}
               </td>
@@ -89,7 +93,7 @@
               <tr>
                 <td>
                   <div>
-                    {{ gen_email.email }}
+                    <a href="mailto: {{ gen_email.email }}">{{ gen_email.email }}</a>
                   </div>
                 </td>
 
