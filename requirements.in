@@ -17,3 +17,4 @@ sendgrid
 Flask-WTF
 boto3
 Flask-Migrate
+flask_admin
