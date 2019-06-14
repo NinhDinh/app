@@ -125,17 +125,19 @@ client_scope = db.Table(
 )
 
 
-def generate_client_id(client_name) -> str:
-    client_id = convert_to_id(client_name) + "-" + random_string()
+def generate_oauth_client_id(client_name) -> str:
+    oauth_client_id = convert_to_id(client_name) + "-" + random_string()
 
     # check that the client does not exist yet
-    if not Client.get_by(client_id=client_id):
-        LOG.debug("generate client_id %s", client_id)
-        return client_id
+    if not Client.get_by(oauth_client_id=oauth_client_id):
+        LOG.debug("generate oauth_client_id %s", oauth_client_id)
+        return oauth_client_id
 
     # Rerun the function
-    LOG.warning("client_id %s already exists, generate a new client_id", client_id)
-    return generate_client_id(client_name)
+    LOG.warning(
+        "client_id %s already exists, generate a new client_id", oauth_client_id
+    )
+    return generate_oauth_client_id(client_name)
 
 
 class Client(db.Model, ModelMixin):
@@ -159,10 +161,13 @@ class Client(db.Model, ModelMixin):
     @classmethod
     def create_new(cls, name, user_id) -> "Client":
         # generate a client-id
-        client_id = generate_client_id(name)
-        client_secret = random_string(40)
+        oauth_client_id = generate_oauth_client_id(name)
+        oauth_client_secret = random_string(40)
         client = Client.create(
-            name=name, client_id=client_id, client_secret=client_secret, user_id=user_id
+            name=name,
+            oauth_client_id=oauth_client_id,
+            oauth_client_secret=oauth_client_secret,
+            user_id=user_id,
         )
 
         # By default, add email and name scope
