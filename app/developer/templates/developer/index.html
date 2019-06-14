@@ -126,14 +126,6 @@
 
 {% block script %}
   <script>
-    requirejs.config({
-      appDir: '.',
-      paths: {
-        'clipboard': ['/static/vendor/clipboard.min'],
-        'notie': ['/static/vendor/notie.min']
-      }
-    });
-
     require(['clipboard', 'notie', 'jquery'], function (Clipboard, notie, $) {
       var clipboard = new Clipboard('.btn');
 
