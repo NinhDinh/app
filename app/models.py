@@ -70,6 +70,7 @@ class User(db.Model, ModelMixin, UserMixin):
     salt = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
     activated = db.Column(db.Boolean, default=False, nullable=False)
 
