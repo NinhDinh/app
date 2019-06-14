@@ -7,6 +7,7 @@ from flask import Flask, redirect, url_for, request, render_template
 from flask_login import current_user
 from sentry_sdk.integrations.flask import FlaskIntegration
 
+from app.admin_model import SLModelView, SLAdminIndexView
 from app.auth.base import auth_bp
 from app.config import (
     SCOPE_NAME,
@@ -20,7 +21,7 @@ from app.config import (
 from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
 from app.discover.base import discover_bp
-from app.extensions import db, login_manager, migrate
+from app.extensions import db, login_manager, migrate, admin
 from app.log import LOG
 from app.models import Client, User, Scope, ClientUser, GenEmail, RedirectUri
 from app.monitor.base import monitor_bp
@@ -67,7 +68,9 @@ def fake_data():
     db.session.commit()
 
     # Create a user
-    user = User.create(id=1, email="john@wick.com", name="John Wick", activated=True)
+    user = User.create(
+        id=1, email="john@wick.com", name="John Wick", activated=True, is_admin=True
+    )
     user.set_password("password")
     db.session.commit()
 
@@ -171,6 +174,10 @@ def init_extensions(app: Flask):
     login_manager.init_app(app)
     db.init_app(app)
     migrate.init_app(app)
+
+    admin.init_app(app, index_view=SLAdminIndexView())
+    admin.add_view(SLModelView(User, db.session))
+    admin.add_view(SLModelView(Client, db.session))
 
 
 if __name__ == "__main__":
