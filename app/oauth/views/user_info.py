@@ -1,10 +1,13 @@
 from flask import request, jsonify
+from flask_cors import cross_origin
 
 from app.models import OauthToken, ClientUser
 from app.oauth.base import oauth_bp
 
 
 @oauth_bp.route("/user_info")
+@oauth_bp.route("/me")
+@cross_origin()
 def user_info():
     """
     Call by client to get user information
