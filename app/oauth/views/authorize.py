@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 from flask import request, render_template, redirect
 from flask_login import current_user, login_required
 
@@ -7,6 +9,13 @@ from app.log import LOG
 from app.models import Client, AuthorizationCode, ClientUser, GenEmail, RedirectUri
 from app.oauth.base import oauth_bp
 from app.utils import random_string
+
+
+def get_host_name_and_scheme(url: str) -> (str, str):
+    """http://localhost:5000?a=b -> (localhost, http) """
+    url_comp = urlparse(url)
+
+    return url_comp.hostname, url_comp.scheme
 
 
 @oauth_bp.route("/authorize")
