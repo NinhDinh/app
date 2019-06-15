@@ -3,10 +3,17 @@ from urllib.parse import urlparse
 from flask import request, render_template, redirect
 from flask_login import current_user, login_required
 
-from app.config import EMAIL_DOMAIN
+from app.config import EMAIL_DOMAIN, AUTHORIZATION_FLOW, IMPLICIT_FLOW, IMPLICIT_FLOWS
 from app.extensions import db
 from app.log import LOG
-from app.models import Client, AuthorizationCode, ClientUser, GenEmail, RedirectUri
+from app.models import (
+    Client,
+    AuthorizationCode,
+    ClientUser,
+    GenEmail,
+    RedirectUri,
+    OauthToken,
+)
 from app.oauth.base import oauth_bp
 from app.utils import random_string
 
@@ -32,10 +39,16 @@ def authorize():
     response_type = request.args.get("response_type")
     redirect_uri: str = request.args.get("redirect_uri")
 
-    # sanity check
-    if not response_type == "code":
+    # Support some variations used by some libs
+    if response_type in IMPLICIT_FLOWS:
+        response_type = IMPLICIT_FLOW
+
+    if response_type != AUTHORIZATION_FLOW and response_type != IMPLICIT_FLOW:
         LOG.d("incorrect response_type %s", response_type)
-        return "response_type must be code", 400
+        return (
+            "response_type must be code or token. SimpleLogin supports only Authorization-Code or Implicit flow",
+            400,
+        )
 
     if not redirect_uri:
         LOG.d("no redirect uri")
@@ -47,9 +60,11 @@ def authorize():
 
     # check if redirect_uri is valid
     # allow localhost by default
-    if not redirect_uri.startswith("http://localhost"):
+    # todo: only allow https
+    hostname, scheme = get_host_name_and_scheme(redirect_uri)
+    if hostname != "localhost":
         if not RedirectUri.get_by(client_id=client.id, uri=redirect_uri):
-            return f"{redirect_uri} is not authorized"
+            return f"{redirect_uri} is not authorized", 400
 
     if current_user.is_authenticated:
         # user has already allowed this client
@@ -66,6 +81,7 @@ def authorize():
                 state=state,
                 redirect_uri=redirect_uri,
                 user_info=user_info,
+                response_type=response_type,
             )
         else:
             return render_template(
@@ -73,6 +89,7 @@ def authorize():
                 client=client,
                 state=state,
                 redirect_uri=redirect_uri,
+                response_type=response_type,
             )
     else:
         # after user logs in, redirect user back to this page
@@ -110,18 +127,33 @@ def allow_client():
     client = Client.get(client_id)
     state = request.form.get("state")
     redirect_uri = request.form.get("redirect-uri")
+    response_type = request.form.get("response-type")
 
     gen_new_email = request.form.get("gen-email") == "on"
 
     if request.form.get("button") == "allow":
         LOG.debug("User %s allows Client %s", current_user, client)
 
-        # Create authorization code
-        auth_code = AuthorizationCode.create(
-            client_id=client.id, user_id=current_user.id, code=random_string()
-        )
-        db.session.add(auth_code)
-        db.session.commit()
+        if response_type == AUTHORIZATION_FLOW:
+            # Create authorization code
+            auth_code = AuthorizationCode.create(
+                client_id=client.id, user_id=current_user.id, code=random_string()
+            )
+            db.session.add(auth_code)
+            redirect_url = f"{redirect_uri}?code={auth_code.code}&state={state}"
+        elif response_type == IMPLICIT_FLOW:
+            # create token directly
+            oauth_token = OauthToken.create(
+                client_id=client.id,
+                user_id=current_user.id,
+                access_token=random_string(
+                    40
+                ),  # todo: make sure access_token is not used yet
+            )
+            db.session.add(oauth_token)
+            redirect_url = (
+                f"{redirect_uri}?access_token={oauth_token.access_token}&state={state}"
+            )
 
         client_user = ClientUser.get_or_create(
             client_id=client.id, user_id=current_user.id
@@ -142,7 +174,6 @@ def allow_client():
             client_user.gen_email_id = gen_email.id
             db.session.commit()
 
-        redirect_url = f"{redirect_uri}?code={auth_code.code}&state={state}"
         return redirect(redirect_url)
     else:
         LOG.debug("User %s denies Client %s", current_user, client)

@@ -84,6 +84,7 @@ def fake_data():
 
     RedirectUri.create(client_id=client1.id, uri="http://sl-client:7000/callback")
     RedirectUri.create(client_id=client1.id, uri="http://localhost:7000/callback")
+    RedirectUri.create(client_id=client1.id, uri="http://sl-client:8000")
     db.session.commit()
 
     # Create another client

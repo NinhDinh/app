@@ -15,6 +15,14 @@ else:
 SCOPE_NAME = "name"
 SCOPE_EMAIL = "email"
 
+# OAuth2 flows
+AUTHORIZATION_FLOW = "code"
+IMPLICIT_FLOW = "token"
+
+# Some libs use some variations
+IMPLICIT_FLOWS = ["id_token", "token"]
+
+
 URL = os.environ.get("URL") or "http://sl-server:5000"
 EMAIL_DOMAIN = os.environ.get("EMAIL_DOMAIN") or "sl"
 SUPPORT_EMAIL = os.environ.get("SUPPORT_EMAIL") or "support@sl"
