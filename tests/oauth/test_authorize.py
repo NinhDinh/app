@@ -9,4 +9,4 @@ def test_get_host_name_and_scheme():
 
     assert get_host_name_and_scheme(
         "https://www.bubblecode.net/en/2016/01/22/understanding-oauth2/#Implicit_Grant"
-    ) == ("www.bubblecode.net", "https")
+    ) != ("www.bubblecode.net", "https")
