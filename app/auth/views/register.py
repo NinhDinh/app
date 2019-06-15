@@ -55,21 +55,23 @@ def register():
 
             email_utils.send(
                 user.email,
-                "Welcome to SimpleLogin! Confirm your email",
+                f"Welcome to SimpleLogin {user.name} - just one more step!",
                 html_content=f"""
-Welcome to SimpleLogin {user.name}! <br><br>                
-                
-            
-You're on your way! <br><br>
-Let's confirm your email address. <br><br>
+                Welcome to SimpleLogin! <br><br>
 
-By clicking on the following <a href="{activation_link}">link</a>, you are confirming your email address. <br><br>
+Our mission is to make the login process as smooth and as secure as possible. This should be easy. <br><br>
 
-Or you can paste this link into your browser: <br><br>
+To get started, we need to confirm your email address, so please click this <a href="{activation_link}">link</a> 
+to finish creating your account. Or you can paste this link into your browser: <br><br>
+
 {activation_link} <br><br>
 
-See you very soon! <br>
-Son - SimpleLogin Founder.<br>
+Your feedbacks are very important to us. Please feel free to reply to this email to let us know any 
+of your suggestion! <br><br>
+
+Thanks! <br><br>
+
+SimpleLogin team.
             
             """,
             )

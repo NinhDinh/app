@@ -26,9 +26,9 @@ def index():
                 f"""
 Hi {current_user.name} ! <br><br>
 This is a test email to make sure you receive email sent at {gen_email.email} <br><br>
-If you have any question, feel free to reply to this email, I will answer you :) <br><br>
+If you have any question, feel free to reply to this email :) <br><br>
 Have a nice day <br><br>
-Son - SimpleLogin Founder.<br>
+SimpleLogin team.
             """,
             )
             flash(
