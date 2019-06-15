@@ -74,8 +74,6 @@ Son - SimpleLogin Founder.<br>
             """,
             )
 
-            # reset form to avoid register again
-            form = RegisterForm()
-            flash("Please check your inbox for an activation email", "success")
+            return render_template("auth/register_waiting_activation.html")
 
     return render_template("auth/register.html", form=form)
