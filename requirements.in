@@ -20,3 +20,4 @@ Flask-Migrate
 flask_admin
 pytest
 flask-cors
+watchtower
