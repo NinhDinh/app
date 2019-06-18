@@ -44,3 +44,7 @@ AWS_REGION = "eu-west-3"
 BUCKET = os.environ.get("BUCKET") or "local.sl"
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+
+ENABLE_CLOUDWATCH = "ENABLE_CLOUDWATCH" in os.environ
+CLOUDWATCH_LOG_GROUP = os.environ.get("CLOUDWATCH_LOG_GROUP")
+CLOUDWATCH_LOG_STREAM = os.environ.get("CLOUDWATCH_LOG_STREAM")
