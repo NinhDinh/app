@@ -12,9 +12,6 @@ def create_db():
         LOG.debug("db not exist, create database")
         create_database(DB_URI)
 
-    app = create_app()
-
-    with app.app_context():
         # Create all tables
         # Use flask-migrate instead of db.create_all()
         flask_migrate.upgrade()
