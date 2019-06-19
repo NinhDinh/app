@@ -46,11 +46,9 @@
 
                 <td>
                   <div>
-                    {% if client.home_url %}
-                      <a href="{{ client.home_url }}">{{ client.name }}</a>
-                    {% else %}
+                    <a href="{{ url_for('developer.client_detail', client_id=client.id) }}">
                       {{ client.name }}
-                    {% endif %}
+                    </a>
                   </div>
                   <div class="small text-muted">
                     Created at: {{ client.created_at |dt }}
