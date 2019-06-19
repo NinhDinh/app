@@ -80,10 +80,10 @@
 
 
   <div class="page-header row">
-    <h3 class="page-title col">All generated emails</h3>
+    <h3 class="page-title col">Emails</h3>
     <form method="post" class="col text-right">
       <input type="hidden" name="form-name" value="create-new-email">
-      <button class="btn btn-success">Generate new email</button>
+      <button class="btn btn-success">Create new email</button>
     </form>
   </div>
 
@@ -95,8 +95,17 @@
             <thead>
             <tr>
               <th>Email</th>
+              <th>
+                Used On
+                <i class="fe fe-help-circle" data-toggle="tooltip"
+                   title="List of app/website that has received this email"></i>
+              </th>
               <th>Actions</th>
-              <th>Enable/Disable Email Forwarding</th>
+              <th>
+                Enable/Disable Email Forwarding
+                <i class="fe fe-help-circle" data-toggle="tooltip"
+                   title="By default, email sent to this email address will be forwarded to your personal email {{ current_user.email }}"></i>
+              </th>
               <th>Created At</th>
             </tr>
             </thead>
@@ -107,6 +116,12 @@
                   <div>
                     <a href="mailto: {{ gen_email.email }}">{{ gen_email.email }}</a>
                   </div>
+                </td>
+
+                <td>
+                  {% for client_user in gen_email.client_users %}
+                    {{ client_user.client.name }} <br>
+                  {% endfor %}
                 </td>
 
                 <td>

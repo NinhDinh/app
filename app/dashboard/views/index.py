@@ -75,7 +75,10 @@ SimpleLogin team.
     sorted(client_users, key=lambda cu: cu.client.name)
 
     gen_emails = (
-        GenEmail.filter_by(user_id=current_user.id).order_by(GenEmail.email).all()
+        GenEmail.filter_by(user_id=current_user.id)
+        .order_by(GenEmail.email)
+        .options(joinedload(GenEmail.client_users))
+        .all()
     )
 
     return render_template(

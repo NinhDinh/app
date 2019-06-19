@@ -238,7 +238,7 @@ class ClientUser(db.Model, ModelMixin):
     # Null means client has access to user original email
     gen_email_id = db.Column(db.ForeignKey(GenEmail.id), nullable=True)
 
-    gen_email = db.relationship(GenEmail)
+    gen_email = db.relationship(GenEmail, backref="client_users")
 
     user = db.relationship(User)
     client = db.relationship(Client)
