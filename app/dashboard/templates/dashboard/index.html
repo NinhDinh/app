@@ -19,9 +19,21 @@
           <table class="table table-hover table-outline table-vcenter text-nowrap card-table">
             <thead>
             <tr>
-              <th>App</th>
-              <th>Information</th>
-              <th class="text-center">First used</th>
+              <th>
+                App
+                <i class="fe fe-help-circle" data-toggle="tooltip"
+                   title="App/website on which you have used the Simple Login button"></i>
+              </th>
+              <th>
+                Information
+                <i class="fe fe-help-circle" data-toggle="tooltip"
+                   title="Information sent to this app/website"></i>
+              </th>
+              <th class="text-center">
+                First used
+                <i class="fe fe-help-circle" data-toggle="tooltip"
+                   title="The first time you have used the SimpleLogin on this app/website"></i>
+              </th>
               <!--<th class="text-center">Last used</th>-->
             </tr>
             </thead>
@@ -36,9 +48,9 @@
                 {% for scope, val in client_user.get_user_info().items() %}
                   <div>
                     {% if scope == "email" %}
-                      {{ scope }}: <a href="mailto:{{ val }}">{{ val }}</a>
-                    {% elif scope != "id" %}
-                      {{ scope }}: {{ val }}
+                      Email: <a href="mailto:{{ val }}">{{ val }}</a>
+                    {% elif scope == "name" %}
+                      Name: {{ val }}
                     {% endif %}
                   </div>
                 {% endfor %}
