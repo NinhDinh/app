@@ -17,6 +17,7 @@ from app.config import (
     ENABLE_SENTRY,
     ENV,
     URL,
+    SHA1,
 )
 from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
@@ -171,7 +172,9 @@ def jinja2_filter(app):
 
     @app.context_processor
     def inject_stage_and_region():
-        return dict(YEAR=datetime.now().year, URL=URL, ENABLE_SENTRY=ENABLE_SENTRY)
+        return dict(
+            YEAR=datetime.now().year, URL=URL, ENABLE_SENTRY=ENABLE_SENTRY, VERSION=SHA1
+        )
 
 
 def init_extensions(app: Flask):
