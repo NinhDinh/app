@@ -151,6 +151,10 @@ def setup_error_page(app):
     def page_not_found(e):
         return render_template("error/404.html"), 404
 
+    @app.errorhandler(Exception)
+    def error_handler(e):
+        return render_template("error/500.html"), 500
+
 
 def setup_favicon_route(app):
     @app.route("/favicon.ico")
