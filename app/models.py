@@ -1,8 +1,9 @@
 import hashlib
-from datetime import datetime
 
+import arrow
 import bcrypt
 from flask_login import UserMixin
+from sqlalchemy_utils import ArrowType
 
 from app import s3
 from app.config import SCOPE_NAME, SCOPE_EMAIL, URL
@@ -13,8 +14,8 @@ from app.utils import convert_to_id, random_string
 
 class ModelMixin(object):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(db.DateTime, default=None, onupdate=datetime.utcnow)
+    created_at = db.Column(ArrowType, default=arrow.utcnow, nullable=False)
+    updated_at = db.Column(ArrowType, default=None, onupdate=arrow.utcnow)
 
     _repr_hide = ["created_at", "updated_at"]
 

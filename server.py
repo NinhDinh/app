@@ -173,7 +173,7 @@ def jinja2_filter(app):
     @app.context_processor
     def inject_stage_and_region():
         return dict(
-            YEAR=datetime.now().year, URL=URL, ENABLE_SENTRY=ENABLE_SENTRY, VERSION=SHA1
+            YEAR=arrow.now().year, URL=URL, ENABLE_SENTRY=ENABLE_SENTRY, VERSION=SHA1
         )
 
 
