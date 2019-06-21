@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 
 import arrow
 import sentry_sdk
@@ -49,7 +48,11 @@ def create_app() -> Flask:
     register_blueprints(app)
     set_index_page(app)
     jinja2_filter(app)
-    setup_error_page(app)
+
+    # Allow display full error in local mode
+    if ENV != "local":
+        setup_error_page(app)
+
     setup_favicon_route(app)
 
     return app
