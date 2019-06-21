@@ -1,3 +1,4 @@
+import enum
 import hashlib
 
 import arrow
@@ -65,6 +66,13 @@ class ModelMixin(object):
         return "%s(%s)" % (self.__class__.__name__, values)
 
 
+class PlanEnum(enum.Enum):
+    free = 0
+    trial = 1
+    monthly = 2
+    yearly = 3
+
+
 class User(db.Model, ModelMixin, UserMixin):
     __tablename__ = "users"
     email = db.Column(db.String(128), unique=True, nullable=False)
@@ -74,6 +82,20 @@ class User(db.Model, ModelMixin, UserMixin):
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
 
     activated = db.Column(db.Boolean, default=False, nullable=False)
+
+    plan = db.Column(
+        db.Enum(PlanEnum),
+        nullable=False,
+        default=PlanEnum.free,
+        server_default=PlanEnum.free,
+    )
+    plan_expiration = db.Column(ArrowType)
+
+    def should_upgrade(self):
+        return self.plan in (PlanEnum.free, PlanEnum.trial)
+
+    def is_premium(self):
+        return self.plan in (PlanEnum.monthly, PlanEnum.yearly)
 
     def set_password(self, password):
         salt = bcrypt.gensalt()
