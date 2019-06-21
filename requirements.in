@@ -21,3 +21,4 @@ flask_admin
 pytest
 flask-cors
 watchtower
+sqlalchemy-utils
