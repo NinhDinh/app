@@ -3,7 +3,7 @@
 {% set active_page = "dashboard" %}
 
 {% block title %}
-    Dashboard
+  Dashboard
 {% endblock %}
 
 {% block default_content %}
@@ -39,36 +39,36 @@
             </thead>
             <tbody>
             {% for client_user in client_users %}
-            <tr>
-              <td>
-                {{ client_user.client.name }}
-              </td>
-
-              <td>
-                {% for scope, val in client_user.get_user_info().items() %}
-                  <div>
-                    {% if scope == "email" %}
-                      Email: <a href="mailto:{{ val }}">{{ val }}</a>
-                    {% elif scope == "name" %}
-                      Name: {{ val }}
-                    {% endif %}
-                  </div>
-                {% endfor %}
-              </td>
-
-
-              <td class="text-center">
-                {{ client_user.created_at | dt }}
-              </td>
-
-              {#            TODO: add last_used#}
-              <!--
-                <td class="text-center">
-                  <div>4 minutes ago</div>
+              <tr>
+                <td>
+                  {{ client_user.client.name }}
                 </td>
-              -->
 
-            </tr>
+                <td>
+                  {% for scope, val in client_user.get_user_info().items() %}
+                    <div>
+                      {% if scope == "email" %}
+                        Email: <a href="mailto:{{ val }}">{{ val }}</a>
+                      {% elif scope == "name" %}
+                        Name: {{ val }}
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </td>
+
+
+                <td class="text-center">
+                  {{ client_user.created_at | dt }}
+                </td>
+
+                {#            TODO: add last_used#}
+                <!--
+                  <td class="text-center">
+                    <div>4 minutes ago</div>
+                  </td>
+                -->
+
+              </tr>
             {% endfor %}
 
             </tbody>

@@ -1,7 +1,7 @@
 {% extends 'default.html' %}
 
 {% block title %}
-    Authorization
+  Authorization
 {% endblock %}
 
 {% block default_content %}
@@ -13,7 +13,7 @@
 
       <ul>
         {% for scope in client.scopes %}
-            <li>{{ scope.name }}</li>
+          <li>{{ scope.name }}</li>
         {% endfor %}
       </ul>
 
