@@ -50,7 +50,7 @@ CLOUDWATCH_LOG_GROUP = os.environ.get("CLOUDWATCH_LOG_GROUP")
 CLOUDWATCH_LOG_STREAM = os.environ.get("CLOUDWATCH_LOG_STREAM")
 
 STRIPE_API = os.environ.get("STRIPE_API")
-STRIPE_YEARLY_SKU = os.environ.get("STRIPE_YEARLY_SKU")
+STRIPE_YEARLY_PLAN = os.environ.get("STRIPE_YEARLY_PLAN")
 STRIPE_MONTHLY_PLAN = os.environ.get("STRIPE_MONTHLY_PLAN")
 
 # Max number emails user can generate for free plan
