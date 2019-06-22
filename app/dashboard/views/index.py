@@ -1,12 +1,14 @@
+import arrow
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from sqlalchemy.orm import joinedload
 
 from app import email_utils
+from app.config import MAX_NB_EMAIL_FREE_PLAN
 from app.dashboard.base import dashboard_bp
 from app.extensions import db
 from app.log import LOG
-from app.models import GenEmail, ClientUser
+from app.models import GenEmail, ClientUser, PlanEnum
 from app.oauth.views.authorize import generate_email
 
 
@@ -37,12 +39,39 @@ SimpleLogin team.
             )
 
         elif request.form.get("form-name") == "create-new-email":
-            random_email = generate_email()
-            GenEmail.create(user_id=current_user.id, email=random_email)
-            db.session.commit()
+            can_create_new_email = True
 
-            LOG.d("generate new email %s for user %s", random_email, current_user)
-            flash(f"Email {random_email} has been created", "success")
+            if current_user.plan != PlanEnum.free:
+                if current_user.plan_expiration <= arrow.now() and (
+                    GenEmail.filter_by(user_id=current_user.id).count()
+                    >= MAX_NB_EMAIL_FREE_PLAN
+                ):
+                    flash(
+                        f"You need to extend your plan to create new email. "
+                        f"Your current plan is expired {current_user.plan_expiration.humanize()}",
+                        "warning",
+                    )
+
+                    can_create_new_email = False
+
+            else:  # free plan
+                if (
+                    GenEmail.filter_by(user_id=current_user.id).count()
+                    >= MAX_NB_EMAIL_FREE_PLAN
+                ):
+                    flash(
+                        f"You need to upgrade your plan to create new email.", "warning"
+                    )
+
+                    can_create_new_email = False
+
+            if can_create_new_email:
+                random_email = generate_email()
+                GenEmail.create(user_id=current_user.id, email=random_email)
+                db.session.commit()
+
+                LOG.d("generate new email %s for user %s", random_email, current_user)
+                flash(f"Email {random_email} has been created", "success")
 
         elif request.form.get("form-name") == "switch-email-forwarding":
             gen_email_id = request.form.get("gen-email-id")
