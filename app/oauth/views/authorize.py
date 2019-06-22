@@ -1,9 +1,17 @@
+import random
 from urllib.parse import urlparse
 
+import arrow
 from flask import request, render_template, redirect
 from flask_login import current_user, login_required
 
-from app.config import EMAIL_DOMAIN, AUTHORIZATION_FLOW, IMPLICIT_FLOW, IMPLICIT_FLOWS
+from app.config import (
+    EMAIL_DOMAIN,
+    AUTHORIZATION_FLOW,
+    IMPLICIT_FLOW,
+    IMPLICIT_FLOWS,
+    MAX_NB_EMAIL_FREE_PLAN,
+)
 from app.extensions import db
 from app.log import LOG
 from app.models import (
@@ -13,6 +21,7 @@ from app.models import (
     GenEmail,
     RedirectUri,
     OauthToken,
+    PlanEnum,
 )
 from app.oauth.base import oauth_bp
 from app.utils import random_string
@@ -131,51 +140,82 @@ def allow_client():
 
     gen_new_email = request.form.get("gen-email") == "on"
 
-    if request.form.get("button") == "allow":
-        LOG.debug("User %s allows Client %s", current_user, client)
+    if request.form.get("button") == "deny":
+        LOG.debug("User %s denies Client %s", current_user, client)
+        redirect_url = f"{redirect_uri}?error=deny&state={state}"
+        return redirect(redirect_url)
 
-        if response_type == AUTHORIZATION_FLOW:
-            # Create authorization code
-            auth_code = AuthorizationCode.create(
-                client_id=client.id, user_id=current_user.id, code=random_string()
-            )
-            db.session.add(auth_code)
-            redirect_url = f"{redirect_uri}?code={auth_code.code}&state={state}"
-        elif response_type == IMPLICIT_FLOW:
-            # create token directly
-            oauth_token = OauthToken.create(
-                client_id=client.id,
-                user_id=current_user.id,
-                access_token=random_string(
-                    40
-                ),  # todo: make sure access_token is not used yet
-            )
-            db.session.add(oauth_token)
-            redirect_url = (
-                f"{redirect_uri}?access_token={oauth_token.access_token}&state={state}"
-            )
+    LOG.debug("User %s allows Client %s", current_user, client)
 
-        client_user = ClientUser.get_or_create(
-            client_id=client.id, user_id=current_user.id
+    if response_type == AUTHORIZATION_FLOW:
+        # Create authorization code
+        auth_code = AuthorizationCode.create(
+            client_id=client.id, user_id=current_user.id, code=random_string()
         )
-        db.session.commit()
+        db.session.add(auth_code)
+        redirect_url = f"{redirect_uri}?code={auth_code.code}&state={state}"
+    elif response_type == IMPLICIT_FLOW:
+        # create token directly
+        oauth_token = OauthToken.create(
+            client_id=client.id,
+            user_id=current_user.id,
+            access_token=random_string(
+                40
+            ),  # todo: make sure access_token is not used yet
+        )
+        db.session.add(oauth_token)
+        redirect_url = (
+            f"{redirect_uri}?access_token={oauth_token.access_token}&state={state}"
+        )
+    else:
+        raise Exception("response_type must be either code or token")
 
-        if gen_new_email:
+    client_user = ClientUser.get_by(client_id=client.id, user_id=current_user.id)
+
+    # user has already allowed this client
+    if client_user:
+        LOG.d("user %s has already allowed client %s", current_user, client)
+        # User cannot choose to gen new email
+        gen_new_email = False
+    else:
+        client_user = ClientUser.create(client_id=client.id, user_id=current_user.id)
+        db.session.flush()
+        LOG.d("create client-user for client %s, user %s", client, current_user)
+
+    if gen_new_email:
+        can_create_new_email = True
+
+        if current_user.plan != PlanEnum.free:
+            if current_user.plan_expiration <= arrow.now() and (
+                GenEmail.filter_by(user_id=current_user.id).count()
+                >= MAX_NB_EMAIL_FREE_PLAN
+            ):
+                can_create_new_email = False
+
+        else:  # free plan
+            if (
+                GenEmail.filter_by(user_id=current_user.id).count()
+                >= MAX_NB_EMAIL_FREE_PLAN
+            ):
+
+                can_create_new_email = False
+
+        if can_create_new_email:
             random_email = generate_email()
             gen_email = GenEmail.create(user_id=current_user.id, email=random_email)
-            db.session.commit()
+            db.session.flush()
             LOG.debug(
                 "generate email %s for user %s, client %s",
                 random_email,
                 current_user,
                 client,
             )
+        else:  # need to reuse one of the gen emails created
+            LOG.d("pick a random email for gen emails for user %s", current_user)
+            gen_emails = GenEmail.filter_by(user_id=current_user.id).all()
+            gen_email = random.choice(gen_emails)
 
-            client_user.gen_email_id = gen_email.id
-            db.session.commit()
+        client_user.gen_email_id = gen_email.id
 
-        return redirect(redirect_url)
-    else:
-        LOG.debug("User %s denies Client %s", current_user, client)
-        redirect_url = f"{redirect_uri}?error=deny&state={state}"
-        return redirect(redirect_url)
+    db.session.commit()
+    return redirect(redirect_url)
