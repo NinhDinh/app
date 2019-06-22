@@ -87,7 +87,7 @@ class User(db.Model, ModelMixin, UserMixin):
         db.Enum(PlanEnum),
         nullable=False,
         default=PlanEnum.free,
-        server_default=PlanEnum.free,
+        server_default=PlanEnum.free.name,
     )
     plan_expiration = db.Column(ArrowType)
 

@@ -1,5 +1,6 @@
 import urllib.parse
 
+import arrow
 from flask import request, flash, render_template
 from flask_wtf import FlaskForm
 from wtforms import StringField, validators
@@ -9,7 +10,7 @@ from app.auth.base import auth_bp
 from app.config import URL
 from app.extensions import db
 from app.log import LOG
-from app.models import User, ActivationCode
+from app.models import User, ActivationCode, PlanEnum
 from app.utils import random_string
 
 
@@ -40,6 +41,9 @@ def register():
             LOG.debug("create user %s", form.email.data)
             user = User.create(email=form.email.data, name=form.name.data)
             user.set_password(form.password.data)
+            # by default new user will be trial period
+            user.plan = PlanEnum.trial
+            user.plan_expiration = arrow.now().shift(days=+15)
             db.session.commit()
 
             activation = ActivationCode.create(user_id=user.id, code=random_string(30))
