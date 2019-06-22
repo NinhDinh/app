@@ -52,3 +52,6 @@ CLOUDWATCH_LOG_STREAM = os.environ.get("CLOUDWATCH_LOG_STREAM")
 STRIPE_API = os.environ.get("STRIPE_API")
 STRIPE_YEARLY_SKU = os.environ.get("STRIPE_YEARLY_SKU")
 STRIPE_MONTHLY_PLAN = os.environ.get("STRIPE_MONTHLY_PLAN")
+
+# Max number emails user can generate for free plan
+MAX_NB_EMAIL_FREE_PLAN = int(os.environ.get("MAX_NB_EMAIL_FREE_PLAN"))
