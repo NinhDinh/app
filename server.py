@@ -2,7 +2,7 @@ import os
 
 import arrow
 import sentry_sdk
-from flask import Flask, redirect, url_for, request, render_template
+from flask import Flask, redirect, url_for, render_template, request
 from flask_login import current_user
 from sentry_sdk.integrations.flask import FlaskIntegration
 
@@ -73,11 +73,11 @@ def fake_data():
 
     # Create a user
     user = User.create(
-        id=1, email="john@wick.com", name="John Wick", activated=True, is_admin=True
+        email="john@wick.com", name="John Wick", activated=True, is_admin=True
     )
     user.set_password("password")
-    user.plan = PlanEnum.yearly
-    user.plan_expiration = arrow.now().shift(weeks=+3)
+    user.plan = PlanEnum.trial
+    user.plan_expiration = arrow.now().shift(weeks=1)
     db.session.commit()
 
     # Create a client
@@ -103,6 +103,13 @@ def fake_data():
 
     ClientUser.create(client_id=client1.id, user_id=user.id, gen_email_id=gen_email.id)
     ClientUser.create(client_id=client2.id, user_id=user.id)
+    db.session.commit()
+
+    user2 = User.create(email="john2@wick.com", name="John Wick 2", activated=True)
+    user2.set_password("password")
+    user2.plan = PlanEnum.free
+    db.session.commit()
+    ClientUser.create(client_id=client1.id, user_id=user2.id)
     db.session.commit()
 
 
