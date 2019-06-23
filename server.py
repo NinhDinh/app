@@ -77,7 +77,7 @@ def fake_data():
     )
     user.set_password("password")
     user.plan = PlanEnum.trial
-    user.plan_expiration = arrow.now().shift(weeks=1)
+    user.trial_expiration = arrow.now().shift(weeks=1)
     db.session.commit()
 
     # Create a client

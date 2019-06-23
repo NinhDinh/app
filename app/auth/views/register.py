@@ -43,7 +43,7 @@ def register():
             user.set_password(form.password.data)
             # by default new user will be trial period
             user.plan = PlanEnum.trial
-            user.plan_expiration = arrow.now().shift(days=+15)
+            user.trial_expiration = arrow.now().shift(days=+15)
             db.session.commit()
 
             activation = ActivationCode.create(user_id=user.id, code=random_string(30))

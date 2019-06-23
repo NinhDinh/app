@@ -1,17 +1,10 @@
 import random
 from urllib.parse import urlparse
 
-import arrow
 from flask import request, render_template, redirect
 from flask_login import current_user, login_required
 
-from app.config import (
-    EMAIL_DOMAIN,
-    AUTHORIZATION_FLOW,
-    IMPLICIT_FLOW,
-    IMPLICIT_FLOWS,
-    MAX_NB_EMAIL_FREE_PLAN,
-)
+from app.config import EMAIL_DOMAIN, AUTHORIZATION_FLOW, IMPLICIT_FLOW, IMPLICIT_FLOWS
 from app.extensions import db
 from app.log import LOG
 from app.models import (
@@ -21,7 +14,6 @@ from app.models import (
     GenEmail,
     RedirectUri,
     OauthToken,
-    PlanEnum,
 )
 from app.oauth.base import oauth_bp
 from app.utils import random_string
@@ -183,22 +175,7 @@ def allow_client():
         LOG.d("create client-user for client %s, user %s", client, current_user)
 
     if gen_new_email:
-        can_create_new_email = True
-
-        if current_user.plan != PlanEnum.free:
-            if current_user.plan_expiration <= arrow.now() and (
-                GenEmail.filter_by(user_id=current_user.id).count()
-                >= MAX_NB_EMAIL_FREE_PLAN
-            ):
-                can_create_new_email = False
-
-        else:  # free plan
-            if (
-                GenEmail.filter_by(user_id=current_user.id).count()
-                >= MAX_NB_EMAIL_FREE_PLAN
-            ):
-
-                can_create_new_email = False
+        can_create_new_email = current_user.can_create_new_email()
 
         if can_create_new_email:
             random_email = generate_email()

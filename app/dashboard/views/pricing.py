@@ -76,7 +76,7 @@ def pricing():
         if subscription.latest_invoice.payment_intent.status == "succeeded":
             LOG.d("payment successful for user %s", current_user)
             current_user.plan = plan
-            current_user.plan_expiration = None
+            current_user.trial_expiration = None
             db.session.commit()
             flash("Thank for your subscription", "success")
             return redirect(url_for("dashboard.index"))

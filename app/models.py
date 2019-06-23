@@ -7,7 +7,7 @@ from flask_login import UserMixin
 from sqlalchemy_utils import ArrowType
 
 from app import s3
-from app.config import SCOPE_NAME, SCOPE_EMAIL, URL
+from app.config import SCOPE_NAME, SCOPE_EMAIL, URL, MAX_NB_EMAIL_FREE_PLAN
 from app.extensions import db
 from app.log import LOG
 from app.utils import convert_to_id, random_string
@@ -91,7 +91,7 @@ class User(db.Model, ModelMixin, UserMixin):
     )
 
     # only relevant for trial period
-    plan_expiration = db.Column(ArrowType)
+    trial_expiration = db.Column(ArrowType)
 
     stripe_customer_id = db.Column(db.String(128), unique=True)
     stripe_card_token = db.Column(db.String(128), unique=True)
@@ -102,6 +102,14 @@ class User(db.Model, ModelMixin, UserMixin):
 
     def is_premium(self):
         return self.plan in (PlanEnum.monthly, PlanEnum.yearly)
+
+    def can_create_new_email(self):
+        if self.is_premium():
+            return True
+        elif self.plan == PlanEnum.trial and self.trial_expiration < arrow.now():
+            return True
+        else:  # free or trial expired
+            return GenEmail.filter_by(user_id=self.id).count() < MAX_NB_EMAIL_FREE_PLAN
 
     def set_password(self, password):
         salt = bcrypt.gensalt()

@@ -45,7 +45,8 @@ def add_real_data():
 
 
 def reset_db():
-    drop_database(DB_URI)
+    if database_exists(DB_URI):
+        drop_database(DB_URI)
     create_db()
     add_real_data()
 
