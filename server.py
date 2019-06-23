@@ -196,6 +196,8 @@ def init_extensions(app: Flask):
     admin.init_app(app, index_view=SLAdminIndexView())
     admin.add_view(SLModelView(User, db.session))
     admin.add_view(SLModelView(Client, db.session))
+    admin.add_view(SLModelView(GenEmail, db.session))
+    admin.add_view(SLModelView(ClientUser, db.session))
 
 
 if __name__ == "__main__":
