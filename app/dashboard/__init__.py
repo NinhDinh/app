@@ -1,1 +1,1 @@
-from .views import index, pricing
+from .views import index, pricing, setting
