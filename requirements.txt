@@ -14,8 +14,9 @@ bcrypt==3.1.6
 blinker==1.4
 boto3==1.9.167
 botocore==1.12.167        # via boto3, s3transfer
-certifi==2019.3.9         # via sentry-sdk
+certifi==2019.3.9         # via requests, sentry-sdk
 cffi==1.12.3              # via bcrypt
+chardet==3.0.4            # via requests
 click==7.0                # via flask, pip-tools
 decorator==4.4.0          # via ipython, traitlets
 docutils==0.14            # via botocore
@@ -27,6 +28,7 @@ flask-sqlalchemy==2.4.0
 flask-wtf==0.14.2
 flask==1.0.3
 gunicorn==19.9.0
+idna==2.8                 # via requests
 importlib-metadata==0.18  # via pluggy, pytest
 ipython-genutils==0.2.0   # via traitlets
 ipython==7.5.0
@@ -55,15 +57,17 @@ python-dateutil==2.8.0    # via alembic, arrow, botocore
 python-dotenv==0.10.3
 python-editor==1.0.4      # via alembic
 python-http-client==3.1.0  # via sendgrid
+requests==2.22.0          # via stripe
 s3transfer==0.2.1         # via boto3
 sendgrid==6.0.5
 sentry-sdk==0.9.0
 six==1.12.0               # via bcrypt, flask-cors, packaging, pip-tools, prompt-toolkit, pytest, python-dateutil, sqlalchemy-utils, traitlets
 sqlalchemy-utils==0.33.11
 sqlalchemy==1.3.4         # via alembic, flask-sqlalchemy, sqlalchemy-utils
+stripe==2.30.1
 traitlets==4.3.2          # via ipython
 unidecode==1.0.23
-urllib3==1.25.3           # via botocore, sentry-sdk
+urllib3==1.25.3           # via botocore, requests, sentry-sdk
 watchtower==0.6.0
 wcwidth==0.1.7            # via prompt-toolkit, pytest
 werkzeug==0.15.4          # via flask
