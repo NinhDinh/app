@@ -121,7 +121,7 @@ class User(db.Model, ModelMixin, UserMixin):
 class ActivationCode(db.Model, ModelMixin):
     """For activate user account"""
 
-    user_id = db.Column(db.ForeignKey(User.id), nullable=False)
+    user_id = db.Column(db.ForeignKey(User.id, ondelete="cascade"), nullable=False)
     code = db.Column(db.String(128), unique=True, nullable=False)
 
     user = db.relationship(User)
@@ -141,14 +141,14 @@ client_scope = db.Table(
     db.Column(
         "client_id",
         db.Integer,
-        db.ForeignKey("client.id"),
+        db.ForeignKey("client.id", ondelete="cascade"),
         primary_key=True,
         nullable=False,
     ),
     db.Column(
         "scope_id",
         db.Integer,
-        db.ForeignKey("scope.id"),
+        db.ForeignKey("scope.id", ondelete="cascade"),
         primary_key=True,
         nullable=False,
     ),
@@ -179,7 +179,7 @@ class Client(db.Model, ModelMixin):
     published = db.Column(db.Boolean, default=False, nullable=False)
 
     # user who created this client
-    user_id = db.Column(db.ForeignKey(User.id), nullable=False)
+    user_id = db.Column(db.ForeignKey(User.id, ondelete="cascade"), nullable=False)
     icon_id = db.Column(db.ForeignKey(File.id), nullable=True)
 
     scopes = db.relationship("Scope", secondary=client_scope, lazy="subquery")
@@ -216,7 +216,7 @@ class Client(db.Model, ModelMixin):
 class RedirectUri(db.Model, ModelMixin):
     """Valid redirect uris for a client"""
 
-    client_id = db.Column(db.ForeignKey(Client.id), nullable=False)
+    client_id = db.Column(db.ForeignKey(Client.id, ondelete="cascade"), nullable=False)
     uri = db.Column(db.String(1024), nullable=False)
 
     client = db.relationship(Client, backref="redirect_uris")
@@ -224,8 +224,8 @@ class RedirectUri(db.Model, ModelMixin):
 
 class AuthorizationCode(db.Model, ModelMixin):
     code = db.Column(db.String(128), unique=True, nullable=False)
-    client_id = db.Column(db.ForeignKey(Client.id), nullable=False)
-    user_id = db.Column(db.ForeignKey(User.id), nullable=False)
+    client_id = db.Column(db.ForeignKey(Client.id, ondelete="cascade"), nullable=False)
+    user_id = db.Column(db.ForeignKey(User.id, ondelete="cascade"), nullable=False)
 
     user = db.relationship(User, lazy=False)
     client = db.relationship(Client, lazy=False)
@@ -233,8 +233,8 @@ class AuthorizationCode(db.Model, ModelMixin):
 
 class OauthToken(db.Model, ModelMixin):
     access_token = db.Column(db.String(128), unique=True)
-    client_id = db.Column(db.ForeignKey(Client.id), nullable=False)
-    user_id = db.Column(db.ForeignKey(User.id), nullable=False)
+    client_id = db.Column(db.ForeignKey(Client.id, ondelete="cascade"), nullable=False)
+    user_id = db.Column(db.ForeignKey(User.id, ondelete="cascade"), nullable=False)
 
     user = db.relationship(User)
     client = db.relationship(Client)
@@ -247,7 +247,7 @@ class Scope(db.Model, ModelMixin):
 class GenEmail(db.Model, ModelMixin):
     """Generated email"""
 
-    user_id = db.Column(db.ForeignKey(User.id), nullable=False)
+    user_id = db.Column(db.ForeignKey(User.id, ondelete="cascade"), nullable=False)
     email = db.Column(db.String(128), unique=True, nullable=False)
 
     enabled = db.Column(db.Boolean(), default=True, nullable=False)
@@ -261,11 +261,13 @@ class ClientUser(db.Model, ModelMixin):
         db.UniqueConstraint("user_id", "client_id", name="uq_client_user"),
     )
 
-    user_id = db.Column(db.ForeignKey(User.id), nullable=False)
-    client_id = db.Column(db.ForeignKey(Client.id), nullable=False)
+    user_id = db.Column(db.ForeignKey(User.id, ondelete="cascade"), nullable=False)
+    client_id = db.Column(db.ForeignKey(Client.id, ondelete="cascade"), nullable=False)
 
     # Null means client has access to user original email
-    gen_email_id = db.Column(db.ForeignKey(GenEmail.id), nullable=True)
+    gen_email_id = db.Column(
+        db.ForeignKey(GenEmail.id, ondelete="cascade"), nullable=True
+    )
 
     gen_email = db.relationship(GenEmail, backref="client_users")
 
