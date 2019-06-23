@@ -130,13 +130,18 @@ def set_index_page(app):
         else:
             return redirect(url_for("auth.login"))
 
-    @app.before_request
-    def before_request():
-        LOG.debug(">>> Request %s", request.url)
-
     @app.after_request
     def after_request(res):
-        LOG.debug("<<< Request ends %s", request.url)
+        # not logging /static call
+        if not request.path.startswith("/static"):
+            LOG.debug(
+                "%s %s %s %s %s",
+                request.remote_addr,
+                request.method,
+                request.path,
+                request.args,
+                res.status_code,
+            )
         return res
 
 
