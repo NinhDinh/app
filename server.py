@@ -133,7 +133,9 @@ def set_index_page(app):
     @app.after_request
     def after_request(res):
         # not logging /static call
-        if not request.path.startswith("/static"):
+        if not request.path.startswith("/static") and not request.path.startswith(
+            "/admin/static"
+        ):
             LOG.debug(
                 "%s %s %s %s %s",
                 request.remote_addr,
