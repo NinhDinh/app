@@ -71,7 +71,7 @@ def _get_logger(name):
 print(f">>> init logging <<<")
 
 # Disable flask logs such as 127.0.0.1 - - [15/Feb/2013 10:52:22] "GET /index.html HTTP/1.1" 200
-log = logging.getLogger('werkzeug')
+log = logging.getLogger("werkzeug")
 log.disabled = True
 
 # Set some shortcuts

@@ -6,6 +6,12 @@
       </a>
 
       <div class="d-flex order-lg-2 ml-auto">
+        {% if current_user.should_upgrade() %}
+          <div class="nav-item d-none d-md-flex">
+            <a href="{{ url_for('dashboard.pricing') }}" class="btn btn-sm btn-outline-primary">Upgrade To Premium</a>
+          </div>
+        {% endif %}
+
         <div class="dropdown">
           <a href="#" class="nav-link pr-0 leading-none" data-toggle="dropdown">
             <span class="avatar" style="background-image: url('{{ current_user.gravatar_url() }}')"></span>
