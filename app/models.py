@@ -89,7 +89,13 @@ class User(db.Model, ModelMixin, UserMixin):
         default=PlanEnum.free,
         server_default=PlanEnum.free.name,
     )
+
+    # only relevant for trial period
     plan_expiration = db.Column(ArrowType)
+
+    stripe_customer_id = db.Column(db.String(128), unique=True)
+    stripe_card_token = db.Column(db.String(128), unique=True)
+    stripe_subscription_id = db.Column(db.String(128), unique=True)
 
     def should_upgrade(self):
         return self.plan in (PlanEnum.free, PlanEnum.trial)
