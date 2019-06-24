@@ -8,6 +8,7 @@ from wtforms import StringField, validators
 from app import email_utils
 from app.auth.base import auth_bp
 from app.config import URL
+from app.email_utils import notify_admin
 from app.extensions import db
 from app.log import LOG
 from app.models import User, ActivationCode, PlanEnum
@@ -78,6 +79,11 @@ Thanks! <br><br>
 SimpleLogin team.
             
             """,
+            )
+
+            notify_admin(
+                f"new user signs up {user.email}",
+                f"{user.name} signs up at {arrow.now()}",
             )
 
             return render_template("auth/register_waiting_activation.html")

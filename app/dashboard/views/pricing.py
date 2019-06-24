@@ -9,6 +9,7 @@ from app.config import (
     STRIPE_YEARLY_PLAN,
 )
 from app.dashboard.base import dashboard_bp
+from app.email_utils import notify_admin
 from app.extensions import db
 from app.log import LOG
 from app.models import PlanEnum
@@ -79,6 +80,9 @@ def pricing():
             current_user.trial_expiration = None
             db.session.commit()
             flash("Thank for your subscription", "success")
+            notify_admin(
+                f"user {current_user.email} has finished subscription", f"plan: {plan}"
+            )
             return redirect(url_for("dashboard.index"))
 
     return render_template("dashboard/pricing.html", stripe_api=STRIPE_API)
