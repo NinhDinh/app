@@ -23,3 +23,14 @@ base
     single: for login, register page
     default: for all pages when user log ins
         
+## How to create new migration
+
+Whenever the model changes, a new migration needs to be created
+
+Set the database connection to use staging environment:
+
+> set -x CONFIG ~/config/simplelogin/staging.env
+
+Generate the migration script and make sure to review it:
+
+> flask db migrate
