@@ -174,6 +174,7 @@ def setup_error_page(app):
 
     @app.errorhandler(Exception)
     def error_handler(e):
+        LOG.exception(e)
         return render_template("error/500.html"), 500
 
 
