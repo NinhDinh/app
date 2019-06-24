@@ -17,6 +17,7 @@ from app.config import (
     ENV,
     URL,
     SHA1,
+    LYRA_ANALYTICS_ID,
 )
 from app.dashboard.base import dashboard_bp
 from app.developer.base import developer_bp
@@ -192,7 +193,11 @@ def jinja2_filter(app):
     @app.context_processor
     def inject_stage_and_region():
         return dict(
-            YEAR=arrow.now().year, URL=URL, ENABLE_SENTRY=ENABLE_SENTRY, VERSION=SHA1
+            YEAR=arrow.now().year,
+            URL=URL,
+            ENABLE_SENTRY=ENABLE_SENTRY,
+            VERSION=SHA1,
+            LYRA_ANALYTICS_ID=LYRA_ANALYTICS_ID,
         )
 
 

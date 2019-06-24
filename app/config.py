@@ -56,3 +56,5 @@ STRIPE_MONTHLY_PLAN = os.environ.get("STRIPE_MONTHLY_PLAN")
 
 # Max number emails user can generate for free plan
 MAX_NB_EMAIL_FREE_PLAN = int(os.environ.get("MAX_NB_EMAIL_FREE_PLAN"))
+
+LYRA_ANALYTICS_ID = os.environ.get("LYRA_ANALYTICS_ID")
