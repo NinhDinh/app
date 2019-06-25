@@ -44,6 +44,12 @@ def add_real_data():
     db.session.commit()
 
 
+def change_password(user_id, new_password):
+    user = User.get(user_id)
+    user.set_password(new_password)
+    db.session.commit()
+
+
 def reset_db():
     if database_exists(DB_URI):
         drop_database(DB_URI)
