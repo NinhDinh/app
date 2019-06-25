@@ -7,6 +7,7 @@ from app.oauth.base import oauth_bp
 
 @oauth_bp.route("/user_info")
 @oauth_bp.route("/me")
+@oauth_bp.route("/userinfo")
 @cross_origin()
 def user_info():
     """
