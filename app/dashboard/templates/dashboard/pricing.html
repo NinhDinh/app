@@ -66,12 +66,17 @@
     </div>
 
     <div class="col-sm-6 col-lg-6">
+      <div class="display-6">
+        The payment is processed by <a href="https://stripe.com" target="_blank">Stripe</a>. <br>
+        Your card number is never stored on our server.
+      </div>
+
+      <hr>
+
       <form method="post" id="payment-form">
         <div class="form-group">
           <label for="card-element" class="form-label">
             Credit or debit card
-            <i class="fe fe-help-circle" data-toggle="tooltip"
-               title="The payment is processed on Stripe"></i>
           </label>
           <div id="card-element">
             <!-- A Stripe Element will be inserted here. -->
