@@ -1,6 +1,7 @@
 import stripe
 from flask import render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
+from stripe.error import CardError
 
 from app.config import (
     STRIPE_API,
@@ -49,40 +50,48 @@ def pricing():
         LOG.d("stripe card token %s for plan %s", stripe_token, plan)
         current_user.stripe_card_token = stripe_token
 
-        customer = stripe.Customer.create(
-            source=stripe_token,
-            email=current_user.email,
-            metadata={"id": current_user.id},
-            name=current_user.name,
-        )
-
-        LOG.d("stripe customer %s", customer)
-        current_user.stripe_customer_id = customer.id
-
-        stripe_plan = (
-            STRIPE_MONTHLY_PLAN if plan == PlanEnum.monthly else STRIPE_YEARLY_PLAN
-        )
-        subscription = stripe.Subscription.create(
-            customer=current_user.stripe_customer_id,
-            items=[{"plan": stripe_plan}],
-            expand=["latest_invoice.payment_intent"],
-        )
-
-        LOG.d("stripe subscription %s", subscription)
-
-        current_user.stripe_subscription_id = subscription.id
-
-        db.session.commit()
-
-        if subscription.latest_invoice.payment_intent.status == "succeeded":
-            LOG.d("payment successful for user %s", current_user)
-            current_user.plan = plan
-            current_user.trial_expiration = None
-            db.session.commit()
-            flash("Thank for your subscription", "success")
-            notify_admin(
-                f"user {current_user.email} has finished subscription", f"plan: {plan}"
+        try:
+            customer = stripe.Customer.create(
+                source=stripe_token,
+                email=current_user.email,
+                metadata={"id": current_user.id},
+                name=current_user.name,
             )
-            return redirect(url_for("dashboard.index"))
+        except CardError as e:
+            LOG.exception("payment problem, code:%s", e.code)
+            flash(
+                "Payment refused with error {e.message}. Could you re-try with another card please?",
+                "danger",
+            )
+        else:
+            LOG.d("stripe customer %s", customer)
+            current_user.stripe_customer_id = customer.id
+
+            stripe_plan = (
+                STRIPE_MONTHLY_PLAN if plan == PlanEnum.monthly else STRIPE_YEARLY_PLAN
+            )
+            subscription = stripe.Subscription.create(
+                customer=current_user.stripe_customer_id,
+                items=[{"plan": stripe_plan}],
+                expand=["latest_invoice.payment_intent"],
+            )
+
+            LOG.d("stripe subscription %s", subscription)
+
+            current_user.stripe_subscription_id = subscription.id
+
+            db.session.commit()
+
+            if subscription.latest_invoice.payment_intent.status == "succeeded":
+                LOG.d("payment successful for user %s", current_user)
+                current_user.plan = plan
+                current_user.trial_expiration = None
+                db.session.commit()
+                flash("Thank for your subscription", "success")
+                notify_admin(
+                    f"user {current_user.email} has finished subscription",
+                    f"plan: {plan}",
+                )
+                return redirect(url_for("dashboard.index"))
 
     return render_template("dashboard/pricing.html", stripe_api=STRIPE_API)
